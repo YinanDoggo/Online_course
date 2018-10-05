@@ -207,6 +207,7 @@ variable that comes after me".
 
 ```{r extract-counts-of-girls-born}
 # type your code for the Question 2 here, and Knit
+arbuthnot$girls
 
 ```
 
@@ -352,7 +353,11 @@ do you see?
 
 ```{r plot-proportion-of-boys-over-time}
 # type your code for the Exercise here, and Knit
-
+arbuthnot <- arbuthnot %>%
+  mutate(ratio = boys / girls)
+ggplot(data = arbuthnot, aes(x = year, y = ratio)) +
+  geom_line() +
+  geom_point()
 ```
 
 Finally, in addition to simple mathematical operators like subtraction and 

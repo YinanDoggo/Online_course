@@ -1,3 +1,3 @@
-SwR: Introduction to Probability and Data - Week 1 - Strength your understanding
+SwR: Introduction to Probability and Data - Week 1 - Complete more - Reading: Week 1 Lab Instructions (Rstudio)
 DA:
 ML: Assignement 4
