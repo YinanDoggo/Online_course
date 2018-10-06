@@ -368,6 +368,10 @@ year with the expression
 ```{r boys-more-than-girls}
 arbuthnot <- arbuthnot %>%
   mutate(more_boys = boys > girls)
+ggplot(data = arbuthnot, aes(x = year, y = more_boys)) +
+       geom_line() + 
+         geom_point()
+       
 ```
 
 This command add a new variable to the `arbuthnot` data frame containing the values
