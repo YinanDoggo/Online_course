@@ -1,3 +1,5 @@
-SwR: Introduction to Probability and Data - Week 1 - Complete more - Reading: Week 1 Lab Instructions (Rstudio)
+SwR: 
+	Week 1: Finished
+	Week 2:	Exploring Categorical Data and Introduction to Inference
 DA:
 ML: Assignement 4
