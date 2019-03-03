@@ -1,4 +1,4 @@
-
+```{r sl ch2 test}
 library(ggplot2)
 library(dplyr)
 library(tidyr)
@@ -32,10 +32,10 @@ hist(Enroll)
 hist(Apps)
 hist(Accept)
 hist(PhD)
-
+```
 
 Question 9
-```{sl ch2 q9}
+```{r sl ch2 q9}
 Auto <- read.csv("AUto.csv", header=T, na.strings="?")
 Auto <- na.omit(Auto)
 colSums(is.na(Auto))
@@ -57,5 +57,35 @@ pairs(Auto)
 ```
 
 Question 10
-```{sl ch2 q10}
+```{r ch2 q10 a}
 library(MASS)
+?Boston
+pairs(Boston)
+attach(Boston)
+```
+
+```{r sl ch2 q10 b/c}
+par(mfrow=c(1,2))
+for (i in c(1:ncol(Boston))){
+        plot(Boston[,i], crim, main = colnames(Boston[i]), xlab = colnames(Boston[i]))
+        plot(Boston[,i], main = paste(colnames(Boston[i]), "plot"), ylab = colnames(Boston[i]))
+}
+```
+
+```{r sl ch2 q10 e}
+length(chas[which(chas == 1)])
+```
+```{r sl ch2 q10 f}
+hist(ptratio,breaks=50)
+plot(ptratio)
+median(ptratio)
+(summary(Boston))
+```
+```{r sl ch2 q10 g}
+
+t(subset(Boston, medv==min(medv)))
+dim(subset(Boston,rm>8))
+summary(subset(Boston, rm>8))
+
+```
+
