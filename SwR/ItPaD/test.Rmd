@@ -1,0 +1,24 @@
+---
+title: "Health_Data_Project"
+author: "Yinan_Zhang"
+date: "12 März 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Part 1: Data 
+
+* 2 pt for correct reasoning for generabizability – Answer should discuss whether random sampling was used. Learners might discuss any reservations, those should be well justified.
+
+* 1 pt for correct reasoning for causality – Answer should discuss whether random assignment was used.
+
+Answer: random sampling has been applied, although people who do not own cell phone and landline are excluded. Nevertherless the percentage of people who neither has cell phone nor landline is extremly low. Thus one can ignore the effect of excluding them.Random assignment has not been applied, as only surveys were conducted. Therefore, the statistic only reveal correlation rather than causality. In total 491,773 samples are collected from non-institutionalized adult (older than 18) of 50 states for year 2013 and 2014. Given the large sample size, one could generalize the correlation statement to the whole population of the US.
+
+## Part 2: Research questions
+
+```{r load data}
+
+```

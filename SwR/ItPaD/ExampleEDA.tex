@@ -1,0 +1,1821 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Example Exploratory Data Analysis},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{longtable,booktabs}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Example Exploratory Data Analysis}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+
+\begin{document}
+\maketitle
+
+\hypertarget{instructions}{}
+This is an unmarked optional tutorial to show the kind of thinking that
+goes into an exploratory data analysis
+
+The goal of this tutorial document is to walk through some of the common
+issues encountered in the early stages of an exploratory analysis on a
+set of data. It gives examples of common problem areas in:
+
+\begin{itemize}
+\tightlist
+\item
+  reading in data
+\item
+  dealing with blanks
+\item
+  dealing with factors
+\end{itemize}
+
+This data is a modified version of data from the New Zealand Election
+Survey, deliberately modified to introduce problems that occur naturally
+in many data sets.
+
+\subsection{Step One. Learn something about the data
+set.}\label{step-one.-learn-something-about-the-data-set.}
+
+In this case, the New Zealand Election Survey takes place every three
+years as a postal survey of a sample of registered electors. Some
+sampled electors were part of a sample panel of people surveyed at the
+previous election as part of a longitudinal study, others were randomly
+chosen from the electoral roll. Those electors that were part of the
+longitudinal panel group were randomly selected in previous elections.
+
+As well as survey results, the data set includes information from the
+electoral roll, and weighting values for adjusting results. The full
+NZES data set has been reduced to a selected group of variables, making
+3101 observations of 107 variables.
+
+\subsection{Step Two. Contemplate some
+questions.}\label{step-two.-contemplate-some-questions.}
+
+Examining the codebook (or in this case the appendix at the end of the
+document to check out the variables).
+
+For example, we might decide that since New Zealand is a Mixed Member
+Proportional voting system, where people get to vote for both an
+electorate (local) representative and a nationwide political party, that
+it would be interesting to look at strategic voting under conditions
+where there are many political parties to choose from. We identify some
+relevant variables of interest in the data, and investigate the nature
+of the individual variables before we explore their interactions. The
+kind of variables they are is going to shape our question.
+
+\subsubsection{Read in the data}\label{read-in-the-data}
+
+There are many different kinds of data files in the world. Each one has
+its own issues when being read in by R. In this case the data is saved
+as a .RData file, which can be read in by using the \texttt{load()}
+command.
+
+As with most reading in file commands, inside the parentheses needs to
+go a piece of text, in quotes, that is the path to the file from the
+working directory (the working directory is the folder that R is
+currently paying attention to). The easiest way to get a R Markdown
+(Rmd) Document and console cooperating about this is to place the file
+with the data in it in the same folder as the R Markdown (Rmd) Document,
+open the R Markdown (Rmd) document in RStudio so we are looking at the
+contents of the document in the editing window, then in the RStudio
+Session menu, use the \textbf{Set Working Directory - To Source File
+Location} command to make a common starting point. Then the code in the
+R Markdown (Rmd) document will use the same working space regardless of
+whether we knit the document or run code chunks in the Console. In this
+case, if the \texttt{nzes2011.RData} file is in the same folder as the R
+Markdown (Rmd) document, hence it can be read into R with the following
+command:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{load}\NormalTok{(}\StringTok{"selected_nzes2011.Rdata"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We also want to load packages that have functions in them we want to
+use. For this particular analysis we will only need the \texttt{dplyr}
+package, but for your project you will also likely need other packages
+as well, e.g. \texttt{ggplot2}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(dplyr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'dplyr' was built under R version 3.5.2
+\end{verbatim}
+
+\subsection{Step Three. Prepare for the first
+question}\label{step-three.-prepare-for-the-first-question}
+
+As a first question, we might be interested in exploring the
+relationship between the party the person voted for, the party that was
+their favourite, and if they believed that their vote makes a difference
+-- focusing on the question that are people who believe their vote makes
+a difference more likely to strategically vote for a party not their
+favourite. To achieve this, we familiarise ourselves with the variables
+\texttt{jpartyvote}, \texttt{jdiffvoting}, and \texttt{\_singlefav}.
+First we check the codebook (see Appendix), then we explore the data.
+
+Viewing the entire dataset in the Data Viewer window by clicking on the
+data frame's name in the Environment or running the \texttt{View()}
+command in the Console can be ineffective since the Data Viewer only
+shows the first 100 columns of the data frame.
+
+Using the \texttt{str()} command on the entire dataset can also be
+equally ineffective. However we can subset the columns of interest and
+take a closer look at them. We can use the \texttt{dplyr} chain to
+select the variables of interest and investigate only their structure by
+adding \texttt{str()} at the end of the chain:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(jpartyvote, jdiffvoting, _singlefav) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{str}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+If we try to run that line, we will get an error message about
+unexpected input or missing object.
+
+We next need to diagnose where the problem lies -- in the R code or in
+the data? The best way to troubleshoot this issue is to run each line of
+the \texttt{dplyr} chain one by one.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }
+\end{Highlighting}
+\end{Shaded}
+
+The first line runs without any erros, but the second line gives an
+error
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(jpartyvote, jdiffvoting, _singlefav)}
+\end{Highlighting}
+\end{Shaded}
+
+We know that \texttt{select()} is a valid \texttt{dplyr} function, so
+that cannot be the problem. This means the problem might be the variable
+names. The issue is that R has rules about what variable names are legal
+(e.g.~no spaces, starting with a letter) and when data is loaded, R will
+often fix variable names to make them legal. This happened to the
+\texttt{\_singlefav} at the time of loading the data.
+
+We could check this by looking through every single variable name in the
+data with the \texttt{names()} command.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{names}\NormalTok{(selected_nzes2011)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   [1] "Jelect"         "jblogel"        "jnewspaper"     "jnatradio"     
+##   [5] "jtalkback"      "jdiscussp"      "jrallies"       "jpersuade"     
+##   [9] "jpcmoney"       "jpcposter"      "jlablike"       "jnatlike"      
+##  [13] "jgrnlike"       "jnzflike"       "jactlike"       "junflike"      
+##  [17] "jmaolike"       "jmnplike"       "jmostlike"      "jmostlikex"    
+##  [21] "jrepublic"      "jsphealth"      "jspedu"         "jspunemp"      
+##  [25] "jspdefence"     "jspsuper"       "jspbusind"      "jsppolice"     
+##  [29] "jspwelfare"     "jspenviro"      "jgovpdk"        "jgovplab"      
+##  [33] "jgovpnat"       "jgovpgrn"       "jgovpnzf"       "jgovpact"      
+##  [37] "jgovunf"        "jgovpmao"       "jgovpmnp"       "jnevervoteno"  
+##  [41] "jnevervotelab"  "jnevervotenat"  "jnevervotegrn"  "jnevervotenzf" 
+##  [45] "jnevervoteact"  "jnevervoteunf"  "jnevervotemao"  "jnevervotemnp" 
+##  [49] "jnevervoteoth"  "jnevervoteothx" "jfirstpx"       "jsecondp"      
+##  [53] "jage"           "jlanguage"      "jlanguagex"     "jrollsex"      
+##  [57] "jhqual"         "jwkft"          "jwkpt"          "jwkun"         
+##  [61] "jwkret"         "jwkdis"         "jwksch"         "jwkunpo"       
+##  [65] "jwkunpi"        "jhhincome"      "jhhadults"      "jhhchn"        
+##  [69] "jmarital"       "r_jind"         "jlablr"         "jnatlr"        
+##  [73] "jgrnlr"         "jnzflr"         "jactlr"         "junflr"        
+##  [77] "jmaolr"         "jmnplr"         "jslflr"         "jrelservices"  
+##  [81] "jrelnone"       "jrelang"        "jrelpres"       "jrelcath"      
+##  [85] "jrelmeth"       "jrelbap"        "jrellat"        "jrelrat"       
+##  [89] "jrelfun"        "jrelothc"       "jrelnonc"       "jreligionx"    
+##  [93] "jreligiousity"  "jethnicity_e"   "jethnicity_m"   "jethnicity_p"  
+##  [97] "jethnicity_a"   "jethnicity_o"   "jethnicityx"    "jethnicmost"   
+## [101] "jethnicmostx"   "jpartyvote"     "jelecvote"      "njptyvote"     
+## [105] "njelecvote"     "jdiffvoting"    "X_singlefav"
+\end{verbatim}
+
+However, when we have hundreds of column names, a useful tip is to just
+search out only possible names. We can search the names for a fragment
+of the name by using the
+\texttt{grep("FRAGMENT",\ variable,\ value\ =\ TRUE)} command, which in
+this case might be:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{grep}\NormalTok{(}\StringTok{"singlefav"}\NormalTok{, }\KeywordTok{names}\NormalTok{(selected_nzes2011), }\DataTypeTok{value =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "X_singlefav"
+\end{verbatim}
+
+The \texttt{value\ =\ TRUE} argument, as described in the help for the
+\texttt{grep()} function reports the mathing character string, as
+opposed to the index number for that string.
+
+We can now confirm that the variable is called \texttt{X\_singlefav}, so
+that is how we should be referring to it.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(jpartyvote, jdiffvoting, X_singlefav) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{str}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+These are all categorical data, however they are recorded as characters
+(text strings) as opposed to factors.
+
+An easy way of tabulating these data to see how many times each level of
+is to use the \texttt{group\_by()} function along with the
+\texttt{summarise()} command:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(jpartyvote) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{count =} \KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 14 x 2
+##    jpartyvote    count
+##    <chr>         <int>
+##  1 <NA>            308
+##  2 Act              29
+##  3 ALC              10
+##  4 Alliance          2
+##  5 Another party     8
+##  6 Conservative     74
+##  7 Don't know       23
+##  8 Green           348
+##  9 Labour          749
+## 10 Mana             62
+## 11 Maori Party     128
+## 12 National       1130
+## 13 NZ First        216
+## 14 United Future    14
+\end{verbatim}
+
+We can see that 23 people answered
+\texttt{"Don\textquotesingle{}t\ know"}. Since our question is about
+people who knew which party they voted for, we might want to exclude
+these observations from our analysis. We can do so by \texttt{filter}ing
+them out.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(jpartyvote }\OperatorTok{!=}\StringTok{ "Don't know"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(jpartyvote) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{count =} \KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 12 x 2
+##    jpartyvote    count
+##    <chr>         <int>
+##  1 Act              29
+##  2 ALC              10
+##  3 Alliance          2
+##  4 Another party     8
+##  5 Conservative     74
+##  6 Green           348
+##  7 Labour          749
+##  8 Mana             62
+##  9 Maori Party     128
+## 10 National       1130
+## 11 NZ First        216
+## 12 United Future    14
+\end{verbatim}
+
+Because there is a \texttt{\%\textgreater{}\%} at the end of the line, R
+knows to continue on to the next line, as with any other `to be
+continued' symbol at the end of the line.
+
+Note that adding the filter also got rid of the \texttt{NA} entries. NA
+(Not Available) is used to indicate blank entries -- those observations
+for which there is no data recorded. It is always a good plan to be
+aware of NAs and deliberately include them in or exclude them from the
+analysis so that the final results are not surprising. In this case
+since NA indicates that these people did not answer the question about
+which party they voted for, exluding them from the analysis makes sense.
+
+We can also similarly view the levels and number of occurances of these
+levels in the \texttt{X\_singlefav} variable:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(X_singlefav) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{count =} \KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 8 x 2
+##   X_singlefav   count
+##   <chr>         <int>
+## 1 <NA>             58
+## 2 Act              33
+## 3 Green           388
+## 4 Labour         1043
+## 5 Mana             47
+## 6 National       1266
+## 7 NZ First        138
+## 8 United Future   128
+\end{verbatim}
+
+This set also has \texttt{NA} entries, but in this case we don't want to
+get rid of anything but the \texttt{NA}s so we need to target them
+directly. \texttt{NA} entries need special targeting because they do not
+actually exist (they are different to the text \texttt{"NA"} or a
+variable saved with the name \texttt{NA}).
+
+If we only wanted to find the \texttt{NA}s we would use the
+\texttt{is.na()} function with the name of the variable inside the
+parentheses.
+
+However since we want the entries that are \textbf{not} \texttt{NA}s we
+can use the \textbf{Not} operator, \texttt{!}, to indicate ``we want all
+the ones that are not NA'':\texttt{!is.na()}. Hence we can
+\texttt{filter} out all non NAs in our \texttt{dplyr} chain:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(X_singlefav)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(X_singlefav) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{count =} \KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 7 x 2
+##   X_singlefav   count
+##   <chr>         <int>
+## 1 Act              33
+## 2 Green           388
+## 3 Labour         1043
+## 4 Mana             47
+## 5 National       1266
+## 6 NZ First        138
+## 7 United Future   128
+\end{verbatim}
+
+And remember that we can \texttt{filter} for multiple characteristics at
+once:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(X_singlefav), jpartyvote }\OperatorTok{!=}\StringTok{ "Don't know"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(X_singlefav) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{count=}\KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 7 x 2
+##   X_singlefav   count
+##   <chr>         <int>
+## 1 Act              29
+## 2 Green           354
+## 3 Labour          914
+## 4 Mana             42
+## 5 National       1172
+## 6 NZ First        119
+## 7 United Future   115
+\end{verbatim}
+
+If we examine the categories in \texttt{jdiffvoting} we can see that
+this variable has levels such as both
+\texttt{"Don\textquotesingle{}t\ know"} and \texttt{NA}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(jdiffvoting) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{count =} \KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 7 x 2
+##   jdiffvoting                                                       count
+##   <chr>                                                             <int>
+## 1 <NA>                                                                 28
+## 2 Don't know                                                           63
+## 3 Voting can make a big difference to what happens                   1605
+## 4 Voting can make a reasonable amount of difference to what happens   841
+## 5 Voting can make some difference to what happens                     339
+## 6 Voting won't make any difference to what happens                    119
+## 7 Voting won't make much difference to what happens                   106
+\end{verbatim}
+
+We need to decide how we want to handle these levels in our analysis.
+
+Remember that our main question is about whether people vote for their
+favorite party or a diffent one. Hence an straighforwrd approach would
+be to first determine whether each observation in the data represents a
+person who voted for the party same as their favorite party or
+different. This requires creating a new variable with the
+\texttt{mutate()} function.
+
+In creating this variable we want to evaluate if for a given observation
+the values in the \texttt{jpartyvote} and \texttt{X\_singlefav}
+variables are the same, or different:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 <-}\StringTok{ }\NormalTok{selected_nzes2011 }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{sameparty =} \KeywordTok{ifelse}\NormalTok{(jpartyvote }\OperatorTok{==}\StringTok{ }\NormalTok{X_singlefav, }\StringTok{"same"}\NormalTok{, }\StringTok{"different"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+This creates a new variable named \texttt{sameparty} that has the value
+\texttt{"same"} if \texttt{jpartyvote} is equal to
+\texttt{X\_singlefav}, and \texttt{"different"} otherwise.
+
+We can again check our work by exploring the groupings in a View:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\KeywordTok{group_by}\NormalTok{(jpartyvote, X_singlefav, sameparty) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{count =} \KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 82 x 4
+## # Groups:   jpartyvote, X_singlefav [82]
+##    jpartyvote X_singlefav   sameparty count
+##    <chr>      <chr>         <chr>     <int>
+##  1 <NA>       <NA>          <NA>         26
+##  2 <NA>       Act           <NA>          4
+##  3 <NA>       Green         <NA>         32
+##  4 <NA>       Labour        <NA>        121
+##  5 <NA>       Mana          <NA>          4
+##  6 <NA>       National      <NA>         92
+##  7 <NA>       NZ First      <NA>         17
+##  8 <NA>       United Future <NA>         12
+##  9 Act        <NA>          <NA>          1
+## 10 Act        Act           same         12
+## # ... with 72 more rows
+\end{verbatim}
+
+We can see that observations where \texttt{jpartyvote} equaled
+\texttt{X\_singlefav}, the value \texttt{"same"} was recorded for the
+new variable \texttt{sameparty}, and the value \texttt{"different"} was
+recorded otherwise. If either \texttt{jpartyvote} or
+\texttt{X\_singlefav} had an \texttt{NA}, R could not check for equality
+and hence \texttt{NA} was recorded for the \texttt{sameparty} variable
+as well.
+
+To view and summarize the ``same'' entries we can use the following:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(jpartyvote, X_singlefav, sameparty) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{count =} \KeywordTok{n}\NormalTok{()) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(sameparty }\OperatorTok{==}\StringTok{ "same"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 7 x 4
+## # Groups:   jpartyvote, X_singlefav [7]
+##   jpartyvote    X_singlefav   sameparty count
+##   <chr>         <chr>         <chr>     <int>
+## 1 Act           Act           same         12
+## 2 Green         Green         same        237
+## 3 Labour        Labour        same        632
+## 4 Mana          Mana          same         31
+## 5 National      National      same       1004
+## 6 NZ First      NZ First      same         82
+## 7 United Future United Future same          5
+\end{verbatim}
+
+And to view and summarize the ``different'' entries we can use the
+following:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(jpartyvote, X_singlefav, sameparty) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{count =} \KeywordTok{n}\NormalTok{()) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(sameparty }\OperatorTok{==}\StringTok{ "different"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 59 x 4
+## # Groups:   jpartyvote, X_singlefav [59]
+##    jpartyvote    X_singlefav   sameparty count
+##    <chr>         <chr>         <chr>     <int>
+##  1 Act           Green         different     1
+##  2 Act           National      different    14
+##  3 Act           United Future different     1
+##  4 ALC           Green         different     1
+##  5 ALC           Labour        different     4
+##  6 ALC           National      different     2
+##  7 ALC           United Future different     3
+##  8 Alliance      Labour        different     1
+##  9 Alliance      National      different     1
+## 10 Another party Green         different     2
+## # ... with 49 more rows
+\end{verbatim}
+
+We can also check how we got any \texttt{NA}s we have by using the
+\texttt{is.na()} function:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(jpartyvote, X_singlefav, sameparty) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{count =} \KeywordTok{n}\NormalTok{()) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(sameparty))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 16 x 4
+## # Groups:   jpartyvote, X_singlefav [16]
+##    jpartyvote   X_singlefav   sameparty count
+##    <chr>        <chr>         <chr>     <int>
+##  1 <NA>         <NA>          <NA>         26
+##  2 <NA>         Act           <NA>          4
+##  3 <NA>         Green         <NA>         32
+##  4 <NA>         Labour        <NA>        121
+##  5 <NA>         Mana          <NA>          4
+##  6 <NA>         National      <NA>         92
+##  7 <NA>         NZ First      <NA>         17
+##  8 <NA>         United Future <NA>         12
+##  9 Act          <NA>          <NA>          1
+## 10 Conservative <NA>          <NA>          1
+## 11 Don't know   <NA>          <NA>          7
+## 12 Green        <NA>          <NA>          1
+## 13 Labour       <NA>          <NA>         11
+## 14 Maori Party  <NA>          <NA>          2
+## 15 National     <NA>          <NA>          7
+## 16 NZ First     <NA>          <NA>          2
+\end{verbatim}
+
+The checks show that the observations with \texttt{NA}s in the
+\texttt{sameparty}are going to be excluded from the analysis when we
+fiter out the \texttt{NA}s in the \texttt{jpartyvote} and
+\texttt{X\_singlefav} variables, so we don't need to worry about them
+anymore.
+
+\subsection{Step four. Prepare for the second
+question}\label{step-four.-prepare-for-the-second-question}
+
+As a second question, we might be interested in exploring the
+relationship between age of voters and how much they like the NZ First
+party. We become familiar with the variables \texttt{jnzflike} and
+\texttt{jage} in the codebook, then explore the data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{str}\NormalTok{(selected_nzes2011}\OperatorTok{$}\NormalTok{jnzflike)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  Factor w/ 12 levels "0","1","10","2",..: 1 1 4 10 4 11 NA NA 1 12 ...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{str}\NormalTok{(selected_nzes2011}\OperatorTok{$}\NormalTok{jage)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  int [1:3101] 37 37 28 71 43 NA 59 68 64 70 ...
+\end{verbatim}
+
+\texttt{jnzflike} is a factor variable, in fact it's ordinal and by
+default the levels are listed in alphabetical order. Since this is a
+categorical variable, we can also summarize the occurances of each level
+with \texttt{group\_by()} and \texttt{summarise()} again:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(jnzflike) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{count =} \KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Factor `jnzflike` contains implicit NA, consider using
+## `forcats::fct_explicit_na`
+\end{verbatim}
+
+\begin{verbatim}
+## # A tibble: 13 x 2
+##    jnzflike   count
+##    <fct>      <int>
+##  1 0            622
+##  2 1            298
+##  3 10           134
+##  4 2            266
+##  5 3            227
+##  6 4            162
+##  7 5            544
+##  8 6            165
+##  9 7            138
+## 10 8            107
+## 11 9             81
+## 12 Don't know   224
+## 13 <NA>         133
+\end{verbatim}
+
+While \texttt{jnzflike} is on a 0 to 10 scale, this variable also has a
+level labeled \texttt{"Don\textquotesingle{}t\ know"}, which is why R
+stores this variable as not a numeric variable.
+
+\texttt{jage}, on the other hand, is an integer, with values that are
+whole numbers between 0 and infinity (or \texttt{NA}). For this variable
+we would want to take a look at numerical summaries such as means,
+medians, etc.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{agemean =} \KeywordTok{mean}\NormalTok{(jage), }\DataTypeTok{agemedian =} \KeywordTok{median}\NormalTok{(jage), }\DataTypeTok{agesd =} \KeywordTok{sd}\NormalTok{(jage), }
+            \DataTypeTok{agemin =} \KeywordTok{min}\NormalTok{(jage), }\DataTypeTok{agemax =} \KeywordTok{max}\NormalTok{(jage))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   agemean agemedian agesd agemin agemax
+## 1      NA        NA   NaN     NA     NA
+\end{verbatim}
+
+What went wrong? The reason why all of the results were reported as NAs
+is that there were some NA entries in the \texttt{jage} variable (people
+not reporting their age). Since it is not possible to take the average
+of a series of values that contain \texttt{NA}s, obtaining the numerical
+summaries requires that we exclude the \texttt{NA}s from the
+calculation.
+
+Most numerical summary functions allow us to easily exclude \texttt{NA}s
+with the \texttt{na.rm} argument. See the help documentation for the
+\texttt{median} function for more information.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{?median}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## starting httpd help server ... done
+\end{verbatim}
+
+An alternative approach is just to \texttt{filter} out the \texttt{NA}s
+first, and then ask for the numerical summaries:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(jage))) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{agemean =} \KeywordTok{mean}\NormalTok{(jage), }\DataTypeTok{agemedian =} \KeywordTok{median}\NormalTok{(jage), }\DataTypeTok{agesd =} \KeywordTok{sd}\NormalTok{(jage), }
+            \DataTypeTok{agemin =} \KeywordTok{min}\NormalTok{(jage), }\DataTypeTok{agemax =} \KeywordTok{max}\NormalTok{(jage))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    agemean agemedian   agesd agemin agemax
+## 1 53.22328        54 17.5371     18    100
+\end{verbatim}
+
+An age range of 18 to 100 is a reasonable age range for a voting age
+population, so there are no obvious errors in the data. If there were,
+we would need to decide if we should filter them out of the analysis.
+
+Having gained some familiarity with the specific variables we are using,
+we next need to consider if there is additional work we should do on the
+data in investigating the question. There are a number of different
+approaches we might take. For example, we could consider if those that
+strongly like NZ First are older than those that strongly dislike NZ
+First, or we could consider if old people like NZ First more than young
+people.
+
+\subsubsection{Approach 1: Strongly liking and disliking NZ First and
+age}\label{approach-1-strongly-liking-and-disliking-nz-first-and-age}
+
+If we wanted to select only two of the possible levels in how much
+people like NZ First, we can filter for these specific levels. When
+interested in filtering for multiple values a variable can take, the
+\texttt{\%in\%} operator can come in handy:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{filter}\NormalTok{(jnzflike }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"0"}\NormalTok{,}\StringTok{"10"}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(jnzflike) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{count =} \KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 2
+##   jnzflike count
+##   <fct>    <int>
+## 1 0          622
+## 2 10         134
+\end{verbatim}
+
+Remember that the \texttt{jnzflike} is not a numerical variable, hence
+we use the quotation marks around the values (even though they happen to
+be numbers).
+
+This is an example of simpligying the analysis by considering only two
+levels of a categorical variable, as opposed to all possible levels.
+
+\subsubsection{Approach 2: Age and liking for NZ
+First}\label{approach-2-age-and-liking-for-nz-first}
+
+We might also like to refine our question slightly, asking do people
+above retirement age (65 in New Zealand) like NZ First more than younger
+people. To do this we can turn the numeric age variable into a
+categorical variable based on whether people are 65 years or older or
+younger than 65. Once again we make use of the \texttt{mutate()} and
+\texttt{ifelse()} functions:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 <-}\StringTok{ }\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{retiredage =} \KeywordTok{ifelse}\NormalTok{(jage }\OperatorTok{>=}\StringTok{ }\DecValTok{65}\NormalTok{, }\StringTok{"retired age"}\NormalTok{, }\StringTok{"working age"}\NormalTok{))}
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(retiredage) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{count =} \KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 2
+##   retiredage  count
+##   <chr>       <int>
+## 1 <NA>           69
+## 2 retired age   876
+## 3 working age  2156
+\end{verbatim}
+
+We can see that individuals in the dataset are now labeled as either
+\texttt{"retired\ age"} or \texttt{"working\ age"} or neither
+(\texttt{NA}), which we can easily filter out if need be.
+
+This is an example of using a numerical threshold to convert a numerical
+variable to a categorical variable.
+
+For approach 2, we might also be want to turn the scale of liking into
+numeric values, because at the moment we cannot easily get summary
+information of the data in factor form. For example, if we ty to run the
+following command, we get an error saying ``need numeric data''.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(retiredage) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{medlike =} \KeywordTok{median}\NormalTok{(jnzflike))}
+\end{Highlighting}
+\end{Shaded}
+
+it generates a ``need numeric data'' error.
+
+We can change the type of data with functions of the form
+\texttt{as.thingtochangeto()}, but it is easy to go wrong with factors.
+For example, this is wrong:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 <-}\StringTok{ }\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{numlikenzf =} \KeywordTok{as.numeric}\NormalTok{(jnzflike))}
+\end{Highlighting}
+\end{Shaded}
+
+We can see it has gone wrong if we use grouping to check our work (and
+it is a very good plan to check our work after converting factors).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(jnzflike, numlikenzf) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{count =} \KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Factor `jnzflike` contains implicit NA, consider using
+## `forcats::fct_explicit_na`
+
+## Warning: Factor `jnzflike` contains implicit NA, consider using
+## `forcats::fct_explicit_na`
+\end{verbatim}
+
+\begin{verbatim}
+## # A tibble: 13 x 3
+## # Groups:   jnzflike [13]
+##    jnzflike   numlikenzf count
+##    <fct>           <dbl> <int>
+##  1 0                   1   622
+##  2 1                   2   298
+##  3 10                  3   134
+##  4 2                   4   266
+##  5 3                   5   227
+##  6 4                   6   162
+##  7 5                   7   544
+##  8 6                   8   165
+##  9 7                   9   138
+## 10 8                  10   107
+## 11 9                  11    81
+## 12 Don't know         12   224
+## 13 <NA>               NA   133
+\end{verbatim}
+
+Factor entries have two parts: the text we see on the screen, and a
+numeric order (remember how 10 was coming between 1 and 2 because of the
+alphabetical order). When we say ``turn this into a number'', R uses the
+numeric order in which it stores the values to do that conversion, as
+opposed to the names of the levels of the categorical variable. Hence,
+we need a conversion method that will use the text strings that label
+the levels, as opposed to the storage order of these levels. We can do
+this by first saving the variable as a character variable, and then
+turning it into a number:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 <-}\StringTok{ }\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{numlikenzf =} \KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{as.character}\NormalTok{(jnzflike)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: NAs durch Umwandlung erzeugt
+\end{verbatim}
+
+The warning ``NAs introduced by coercion'' happens since the level
+\texttt{"Don\textquotesingle{}t\ know"} cannot be turned into a number.
+But this should be fine for our purposes since we are interested in the
+numerical responses anyway.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{selected_nzes2011 }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(jnzflike, numlikenzf) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{count =} \KeywordTok{n}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Factor `jnzflike` contains implicit NA, consider using
+## `forcats::fct_explicit_na`
+
+## Warning: Factor `jnzflike` contains implicit NA, consider using
+## `forcats::fct_explicit_na`
+\end{verbatim}
+
+\begin{verbatim}
+## # A tibble: 13 x 3
+## # Groups:   jnzflike [13]
+##    jnzflike   numlikenzf count
+##    <fct>           <dbl> <int>
+##  1 0                   0   622
+##  2 1                   1   298
+##  3 10                 10   134
+##  4 2                   2   266
+##  5 3                   3   227
+##  6 4                   4   162
+##  7 5                   5   544
+##  8 6                   6   165
+##  9 7                   7   138
+## 10 8                   8   107
+## 11 9                   9    81
+## 12 Don't know         NA   224
+## 13 <NA>               NA   133
+\end{verbatim}
+
+Converting the factor to a character first ensures that the numerical
+values used in the labels of the levels of the categorical variable are
+used.
+
+Now that we cleaned up the data in a way that addresses the needs of the
+research questions we want to explore, we are ready to continue with our
+analysis.
+
+\subsection{Appendix: List of fields in example
+data}\label{appendix-list-of-fields-in-example-data}
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule
+\begin{minipage}[b]{0.14\columnwidth}\raggedright\strut
+Variable\strut
+\end{minipage} & \begin{minipage}[b]{0.70\columnwidth}\raggedright\strut
+Question\strut
+\end{minipage} & \begin{minipage}[b]{0.08\columnwidth}\raggedright\strut
+DataType\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jactlike}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A14: how much like Act\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+Factor\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jactlr}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A18: Act on left-right scale\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jage}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+Respondent's age in years\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+int\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jblogel}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A6h: visit political blog for election\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jdiffvoting}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A13: does voting make any difference to what happens\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jdiscussp}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A11a: how often discussed politics with others\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{Jelect}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+Electorate\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+int\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jelecvote}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C4: if cast electorate vote, for which party's candidate\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jethnicity\_a}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F19a: ethnicity - Asian\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jethnicity\_e}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F19a: ethnicity - NZ European\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jethnicity\_m}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F19a: ethnicity - NZ Maori\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jethnicity\_o}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F19a: ethnicity - Other\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jethnicity\_p}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F19a: ethnicity - Pacific\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jethnicityx}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F19ax: other ethnic group belonged to detail\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jethnicmost}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F19b: ethnic group identified with most\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jethnicmostx}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F19bx: other ethnic group identified with most\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jfirstpx}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C10x: on election day other party most wanted to be in government\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jgovpact}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C8: Act helped form the government after 2008 election\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jgovpdk}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C8: can't recall which parties formed the government after 2008
+election\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jgovpgrn}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C8: Greens helped form the government after 2008 election\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jgovplab}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C8: Labour helped form the government after 2008 election\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jgovpmao}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C8: Maori Party helped form the government after 2008 election\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jgovpmnp}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C8: Mana Party helped form the government after 2008 election\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jgovpnat}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C8: National helped form the government after 2008 election\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jgovpnzf}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C8: NZ First helped form the government after 2008 election\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jgovunf}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C8: United Future helped form the government after 2008 election\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jgrnlike}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A14: how much like Greens\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+Factor\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jgrnlr}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A18: Greens on left-right scale\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jhhadults}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F23a: number of adults in household\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+int\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jhhchn}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F23b: number of children in household\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+int\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jhhincome}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F22: household income between 1 April 2010 and 31 March 2011\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jhqual}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F8: highest formal educational qualification\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jlablike}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A14: how much like Labour\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+Factor\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jlablr}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A18: Labour on left-right scale\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jlanguage}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F3: main language spoken at your home\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jlanguagex}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F3x: other main language spoken\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jmaolike}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A14: how much like Maori Party\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+Factor\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jmaolr}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A18: Maori Party on left-right scale\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jmarital}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F24: marital status\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jmnplike}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A14: how much like Mana Party\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+Factor\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jmnplr}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A18: Mana Party on left-right scale\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jmostlike}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A15: on election day which party liked most\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jmostlikex}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A15x: other party liked most\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnatlike}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A14: how much like National\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+Factor\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnatlr}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A18: National on left-right scale\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnatradio}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A10d: how often followed election news on Radio New Zealand:
+National\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnevervoteact}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C16: would never vote for Act\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnevervotegrn}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C16: would never vote for Greens\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnevervotelab}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C16: would never vote for Labour\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnevervotemao}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C16: would never vote for Maori Party\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnevervotemnp}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C16: would never vote for Mana Party\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnevervotenat}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C16: would never vote for National\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnevervoteno}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C16: no party for which you would never vote\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnevervotenzf}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C16: would never vote for NZ First\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnevervoteoth}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C16: would never vote for another party\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnevervoteothx}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C16: other party for for which you would never vote\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnevervoteunf}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C16: would never vote for United Future\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnewspaper}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A10c: how often followed election news in newspaper\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnzflike}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A14: how much like NZ First\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+Factor\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jnzflr}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A18: NZ First on left-right scale\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jpartyvote}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C3: if cast party vote, for which party\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jpcmoney}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A11d: how often contributed money to a party or candidate\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jpcposter}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A11e: how often put up party or candidate posters\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jpersuade}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A11c: how often talk to anyone to persuade them how to vote\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jrallies}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A11b: how often attended political meetings or rallies\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jrelang}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F17: anglican\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jrelbap}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F17: baptist\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jrelcath}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F17: catholic\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jrelfun}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F17: independent-fundamentalist-pentecostal church\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jreligionx}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F17x: other religion detail\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jreligiousity}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F18: how religious are you\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jrellat}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F17: latter day saints\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jrelmeth}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F17: methodist\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jrelnonc}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F17: non-Christian\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jrelnone}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F17: no religion\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jrelothc}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F17: other Christian\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jrelpres}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F17: presbyterian\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jrelrat}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F17: ratana\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jrelservices}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F16: apart from weddings, funerals, baptisms, how often do you attend
+religious services\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jrepublic}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+B1: should NZ become a republic or retain Queen as head of state\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jrollsex}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+Respondent's gender from electoral roll\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jsecondp}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+C11: on election day which party overall was you second choice to be in
+government\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jslflr}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A19: yourself on left-right scale\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jspbusind}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+B3f: should there be more or less public spending on business and
+industry\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jspdefence}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+B3d: should there be more or less public spending on defence\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jspedu}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+B3b: should there be more or less public spending on education\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jspenviro}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+B3i: should there be more or less public spending on the
+environment\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jsphealth}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+B3a: should there be more or less public spending on health\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jsppolice}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+B3g: should there be more or less public spending on police and law
+enforcement\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jspsuper}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+B3e: should there be more or less public spending on
+superannuation\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jspunemp}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+B3c: should there be more or less public spending on unemployment
+benefits\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jspwelfare}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+B3h: should there be more or less public spending on welfare
+benefits\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jtalkback}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A10e: how often followed election news on talkback radio\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{junflike}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A14: how much like United Future\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+Factor\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{junflr}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+A18: United Future on left-right scale\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jwkdis}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F9: disabled, unable to work\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jwkft}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F9: working full-time for pay or other income\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jwkpt}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F9: working part-time for pay or other income\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jwkret}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F9: retired\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jwksch}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F9: at school, university, or other educational institution\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jwkun}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F9: unemployed, laid off, looking for work\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jwkunpi}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F9: working unpaid within the home\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{jwkunpo}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+F9: working unpaid outside the home\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{njelecvote}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+Electorate Vote with nonvote\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{njptyvote}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+Party Vote with nonvote\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{r\_jind}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+Respondent Industry Codes\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\texttt{\_singlefav}\strut
+\end{minipage} & \begin{minipage}[t]{0.70\columnwidth}\raggedright\strut
+Caluclated Variable of most liked of major parties Question A14\strut
+\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\raggedright\strut
+chr\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+
+\end{document}

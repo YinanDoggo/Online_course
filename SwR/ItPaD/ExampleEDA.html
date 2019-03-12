@@ -177,7 +177,7 @@ $(document).ready(function () {
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;selected_nzes2011.Rdata&quot;</span>)</code></pre></div>
 <p>We also want to load packages that have functions in them we want to use. For this particular analysis we will only need the <code>dplyr</code> package, but for your project you will also likely need other packages as well, e.g. <code>ggplot2</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)</code></pre></div>
-<pre><code>## Warning: package 'dplyr' was built under R version 3.4.4</code></pre>
+<pre><code>## Warning: package 'dplyr' was built under R version 3.5.2</code></pre>
 </div>
 </div>
 <div id="step-three.-prepare-for-the-first-question" class="section level2">
@@ -238,42 +238,41 @@ $(document).ready(function () {
 <span class="st">  </span><span class="kw">group_by</span>(jpartyvote) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">n</span>())</code></pre></div>
 <pre><code>## # A tibble: 14 x 2
-##       jpartyvote count
-##            &lt;chr&gt; &lt;int&gt;
-##  1           Act    29
-##  2           ALC    10
-##  3      Alliance     2
-##  4 Another party     8
-##  5  Conservative    74
-##  6    Don't know    23
-##  7         Green   348
-##  8        Labour   749
-##  9          Mana    62
-## 10   Maori Party   128
-## 11      National  1130
-## 12      NZ First   216
-## 13 United Future    14
-## 14          &lt;NA&gt;   308</code></pre>
+##    jpartyvote    count
+##    &lt;chr&gt;         &lt;int&gt;
+##  1 &lt;NA&gt;            308
+##  2 Act              29
+##  3 ALC              10
+##  4 Alliance          2
+##  5 Another party     8
+##  6 Conservative     74
+##  7 Don't know       23
+##  8 Green           348
+##  9 Labour          749
+## 10 Mana             62
+## 11 Maori Party     128
+## 12 National       1130
+## 13 NZ First        216
+## 14 United Future    14</code></pre>
 <p>We can see that 23 people answered <code>&quot;Don't know&quot;</code>. Since our question is about people who knew which party they voted for, we might want to exclude these observations from our analysis. We can do so by <code>filter</code>ing them out.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected_nzes2011 <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">filter</span>(jpartyvote <span class="op">!=</span><span class="st"> &quot;Don't know&quot;</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(jpartyvote) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">n</span>())</code></pre></div>
-<pre><code>## Warning: package 'bindrcpp' was built under R version 3.4.4</code></pre>
 <pre><code>## # A tibble: 12 x 2
-##       jpartyvote count
-##            &lt;chr&gt; &lt;int&gt;
-##  1           Act    29
-##  2           ALC    10
-##  3      Alliance     2
+##    jpartyvote    count
+##    &lt;chr&gt;         &lt;int&gt;
+##  1 Act              29
+##  2 ALC              10
+##  3 Alliance          2
 ##  4 Another party     8
-##  5  Conservative    74
-##  6         Green   348
-##  7        Labour   749
-##  8          Mana    62
-##  9   Maori Party   128
-## 10      National  1130
-## 11      NZ First   216
+##  5 Conservative     74
+##  6 Green           348
+##  7 Labour          749
+##  8 Mana             62
+##  9 Maori Party     128
+## 10 National       1130
+## 11 NZ First        216
 ## 12 United Future    14</code></pre>
 <p>Because there is a <code>%&gt;%</code> at the end of the line, R knows to continue on to the next line, as with any other ‘to be continued’ symbol at the end of the line.</p>
 <p>Note that adding the filter also got rid of the <code>NA</code> entries. NA (Not Available) is used to indicate blank entries – those observations for which there is no data recorded. It is always a good plan to be aware of NAs and deliberately include them in or exclude them from the analysis so that the final results are not surprising. In this case since NA indicates that these people did not answer the question about which party they voted for, exluding them from the analysis makes sense.</p>
@@ -282,16 +281,16 @@ $(document).ready(function () {
 <span class="st">  </span><span class="kw">group_by</span>(X_singlefav) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">n</span>())</code></pre></div>
 <pre><code>## # A tibble: 8 x 2
-##     X_singlefav count
-##           &lt;chr&gt; &lt;int&gt;
-## 1           Act    33
-## 2         Green   388
-## 3        Labour  1043
-## 4          Mana    47
-## 5      National  1266
-## 6      NZ First   138
-## 7 United Future   128
-## 8          &lt;NA&gt;    58</code></pre>
+##   X_singlefav   count
+##   &lt;chr&gt;         &lt;int&gt;
+## 1 &lt;NA&gt;             58
+## 2 Act              33
+## 3 Green           388
+## 4 Labour         1043
+## 5 Mana             47
+## 6 National       1266
+## 7 NZ First        138
+## 8 United Future   128</code></pre>
 <p>This set also has <code>NA</code> entries, but in this case we don’t want to get rid of anything but the <code>NA</code>s so we need to target them directly. <code>NA</code> entries need special targeting because they do not actually exist (they are different to the text <code>&quot;NA&quot;</code> or a variable saved with the name <code>NA</code>).</p>
 <p>If we only wanted to find the <code>NA</code>s we would use the <code>is.na()</code> function with the name of the variable inside the parentheses.</p>
 <p>However since we want the entries that are <strong>not</strong> <code>NA</code>s we can use the <strong>Not</strong> operator, <code>!</code>, to indicate “we want all the ones that are not NA”:<code>!is.na()</code>. Hence we can <code>filter</code> out all non NAs in our <code>dplyr</code> chain:</p>
@@ -300,14 +299,14 @@ $(document).ready(function () {
 <span class="st">  </span><span class="kw">group_by</span>(X_singlefav) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">n</span>())</code></pre></div>
 <pre><code>## # A tibble: 7 x 2
-##     X_singlefav count
-##           &lt;chr&gt; &lt;int&gt;
-## 1           Act    33
-## 2         Green   388
-## 3        Labour  1043
-## 4          Mana    47
-## 5      National  1266
-## 6      NZ First   138
+##   X_singlefav   count
+##   &lt;chr&gt;         &lt;int&gt;
+## 1 Act              33
+## 2 Green           388
+## 3 Labour         1043
+## 4 Mana             47
+## 5 National       1266
+## 6 NZ First        138
 ## 7 United Future   128</code></pre>
 <p>And remember that we can <code>filter</code> for multiple characteristics at once:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected_nzes2011 <span class="op">%&gt;%</span><span class="st"> </span>
@@ -315,29 +314,29 @@ $(document).ready(function () {
 <span class="st">  </span><span class="kw">group_by</span>(X_singlefav) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count=</span><span class="kw">n</span>())</code></pre></div>
 <pre><code>## # A tibble: 7 x 2
-##     X_singlefav count
-##           &lt;chr&gt; &lt;int&gt;
-## 1           Act    29
-## 2         Green   354
-## 3        Labour   914
-## 4          Mana    42
-## 5      National  1172
-## 6      NZ First   119
+##   X_singlefav   count
+##   &lt;chr&gt;         &lt;int&gt;
+## 1 Act              29
+## 2 Green           354
+## 3 Labour          914
+## 4 Mana             42
+## 5 National       1172
+## 6 NZ First        119
 ## 7 United Future   115</code></pre>
 <p>If we examine the categories in <code>jdiffvoting</code> we can see that this variable has levels such as both <code>&quot;Don't know&quot;</code> and <code>NA</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected_nzes2011 <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(jdiffvoting) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">n</span>())</code></pre></div>
 <pre><code>## # A tibble: 7 x 2
-##                                                         jdiffvoting count
-##                                                               &lt;chr&gt; &lt;int&gt;
-## 1                                                        Don't know    63
-## 2                  Voting can make a big difference to what happens  1605
-## 3 Voting can make a reasonable amount of difference to what happens   841
-## 4                   Voting can make some difference to what happens   339
-## 5                  Voting won't make any difference to what happens   119
-## 6                 Voting won't make much difference to what happens   106
-## 7                                                              &lt;NA&gt;    28</code></pre>
+##   jdiffvoting                                                       count
+##   &lt;chr&gt;                                                             &lt;int&gt;
+## 1 &lt;NA&gt;                                                                 28
+## 2 Don't know                                                           63
+## 3 Voting can make a big difference to what happens                   1605
+## 4 Voting can make a reasonable amount of difference to what happens   841
+## 5 Voting can make some difference to what happens                     339
+## 6 Voting won't make any difference to what happens                    119
+## 7 Voting won't make much difference to what happens                   106</code></pre>
 <p>We need to decide how we want to handle these levels in our analysis.</p>
 <p>Remember that our main question is about whether people vote for their favorite party or a diffent one. Hence an straighforwrd approach would be to first determine whether each observation in the data represents a person who voted for the party same as their favorite party or different. This requires creating a new variable with the <code>mutate()</code> function.</p>
 <p>In creating this variable we want to evaluate if for a given observation the values in the <code>jpartyvote</code> and <code>X_singlefav</code> variables are the same, or different:</p>
@@ -349,19 +348,19 @@ $(document).ready(function () {
 <span class="kw">group_by</span>(jpartyvote, X_singlefav, sameparty) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">n</span>())</code></pre></div>
 <pre><code>## # A tibble: 82 x 4
-## # Groups:   jpartyvote, X_singlefav [?]
-##    jpartyvote   X_singlefav sameparty count
-##         &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt; &lt;int&gt;
-##  1        Act           Act      same    12
-##  2        Act         Green different     1
-##  3        Act      National different    14
-##  4        Act United Future different     1
-##  5        Act          &lt;NA&gt;      &lt;NA&gt;     1
-##  6        ALC         Green different     1
-##  7        ALC        Labour different     4
-##  8        ALC      National different     2
-##  9        ALC United Future different     3
-## 10   Alliance        Labour different     1
+## # Groups:   jpartyvote, X_singlefav [82]
+##    jpartyvote X_singlefav   sameparty count
+##    &lt;chr&gt;      &lt;chr&gt;         &lt;chr&gt;     &lt;int&gt;
+##  1 &lt;NA&gt;       &lt;NA&gt;          &lt;NA&gt;         26
+##  2 &lt;NA&gt;       Act           &lt;NA&gt;          4
+##  3 &lt;NA&gt;       Green         &lt;NA&gt;         32
+##  4 &lt;NA&gt;       Labour        &lt;NA&gt;        121
+##  5 &lt;NA&gt;       Mana          &lt;NA&gt;          4
+##  6 &lt;NA&gt;       National      &lt;NA&gt;         92
+##  7 &lt;NA&gt;       NZ First      &lt;NA&gt;         17
+##  8 &lt;NA&gt;       United Future &lt;NA&gt;         12
+##  9 Act        &lt;NA&gt;          &lt;NA&gt;          1
+## 10 Act        Act           same         12
 ## # ... with 72 more rows</code></pre>
 <p>We can see that observations where <code>jpartyvote</code> equaled <code>X_singlefav</code>, the value <code>&quot;same&quot;</code> was recorded for the new variable <code>sameparty</code>, and the value <code>&quot;different&quot;</code> was recorded otherwise. If either <code>jpartyvote</code> or <code>X_singlefav</code> had an <code>NA</code>, R could not check for equality and hence <code>NA</code> was recorded for the <code>sameparty</code> variable as well.</p>
 <p>To view and summarize the “same” entries we can use the following:</p>
@@ -371,15 +370,15 @@ $(document).ready(function () {
 <span class="st">  </span><span class="kw">filter</span>(sameparty <span class="op">==</span><span class="st"> &quot;same&quot;</span>)</code></pre></div>
 <pre><code>## # A tibble: 7 x 4
 ## # Groups:   jpartyvote, X_singlefav [7]
-##      jpartyvote   X_singlefav sameparty count
-##           &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt; &lt;int&gt;
-## 1           Act           Act      same    12
-## 2         Green         Green      same   237
-## 3        Labour        Labour      same   632
-## 4          Mana          Mana      same    31
-## 5      National      National      same  1004
-## 6      NZ First      NZ First      same    82
-## 7 United Future United Future      same     5</code></pre>
+##   jpartyvote    X_singlefav   sameparty count
+##   &lt;chr&gt;         &lt;chr&gt;         &lt;chr&gt;     &lt;int&gt;
+## 1 Act           Act           same         12
+## 2 Green         Green         same        237
+## 3 Labour        Labour        same        632
+## 4 Mana          Mana          same         31
+## 5 National      National      same       1004
+## 6 NZ First      NZ First      same         82
+## 7 United Future United Future same          5</code></pre>
 <p>And to view and summarize the “different” entries we can use the following:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected_nzes2011 <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(jpartyvote, X_singlefav, sameparty) <span class="op">%&gt;%</span>
@@ -387,18 +386,18 @@ $(document).ready(function () {
 <span class="st">  </span><span class="kw">filter</span>(sameparty <span class="op">==</span><span class="st"> &quot;different&quot;</span>)</code></pre></div>
 <pre><code>## # A tibble: 59 x 4
 ## # Groups:   jpartyvote, X_singlefav [59]
-##       jpartyvote   X_singlefav sameparty count
-##            &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt; &lt;int&gt;
-##  1           Act         Green different     1
-##  2           Act      National different    14
-##  3           Act United Future different     1
-##  4           ALC         Green different     1
-##  5           ALC        Labour different     4
-##  6           ALC      National different     2
-##  7           ALC United Future different     3
-##  8      Alliance        Labour different     1
-##  9      Alliance      National different     1
-## 10 Another party         Green different     2
+##    jpartyvote    X_singlefav   sameparty count
+##    &lt;chr&gt;         &lt;chr&gt;         &lt;chr&gt;     &lt;int&gt;
+##  1 Act           Green         different     1
+##  2 Act           National      different    14
+##  3 Act           United Future different     1
+##  4 ALC           Green         different     1
+##  5 ALC           Labour        different     4
+##  6 ALC           National      different     2
+##  7 ALC           United Future different     3
+##  8 Alliance      Labour        different     1
+##  9 Alliance      National      different     1
+## 10 Another party Green         different     2
 ## # ... with 49 more rows</code></pre>
 <p>We can also check how we got any <code>NA</code>s we have by using the <code>is.na()</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected_nzes2011 <span class="op">%&gt;%</span><span class="st"> </span>
@@ -407,24 +406,24 @@ $(document).ready(function () {
 <span class="st">  </span><span class="kw">filter</span>(<span class="kw">is.na</span>(sameparty))</code></pre></div>
 <pre><code>## # A tibble: 16 x 4
 ## # Groups:   jpartyvote, X_singlefav [16]
-##      jpartyvote   X_singlefav sameparty count
-##           &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt; &lt;int&gt;
-##  1          Act          &lt;NA&gt;      &lt;NA&gt;     1
-##  2 Conservative          &lt;NA&gt;      &lt;NA&gt;     1
-##  3   Don't know          &lt;NA&gt;      &lt;NA&gt;     7
-##  4        Green          &lt;NA&gt;      &lt;NA&gt;     1
-##  5       Labour          &lt;NA&gt;      &lt;NA&gt;    11
-##  6  Maori Party          &lt;NA&gt;      &lt;NA&gt;     2
-##  7     National          &lt;NA&gt;      &lt;NA&gt;     7
-##  8     NZ First          &lt;NA&gt;      &lt;NA&gt;     2
-##  9         &lt;NA&gt;           Act      &lt;NA&gt;     4
-## 10         &lt;NA&gt;         Green      &lt;NA&gt;    32
-## 11         &lt;NA&gt;        Labour      &lt;NA&gt;   121
-## 12         &lt;NA&gt;          Mana      &lt;NA&gt;     4
-## 13         &lt;NA&gt;      National      &lt;NA&gt;    92
-## 14         &lt;NA&gt;      NZ First      &lt;NA&gt;    17
-## 15         &lt;NA&gt; United Future      &lt;NA&gt;    12
-## 16         &lt;NA&gt;          &lt;NA&gt;      &lt;NA&gt;    26</code></pre>
+##    jpartyvote   X_singlefav   sameparty count
+##    &lt;chr&gt;        &lt;chr&gt;         &lt;chr&gt;     &lt;int&gt;
+##  1 &lt;NA&gt;         &lt;NA&gt;          &lt;NA&gt;         26
+##  2 &lt;NA&gt;         Act           &lt;NA&gt;          4
+##  3 &lt;NA&gt;         Green         &lt;NA&gt;         32
+##  4 &lt;NA&gt;         Labour        &lt;NA&gt;        121
+##  5 &lt;NA&gt;         Mana          &lt;NA&gt;          4
+##  6 &lt;NA&gt;         National      &lt;NA&gt;         92
+##  7 &lt;NA&gt;         NZ First      &lt;NA&gt;         17
+##  8 &lt;NA&gt;         United Future &lt;NA&gt;         12
+##  9 Act          &lt;NA&gt;          &lt;NA&gt;          1
+## 10 Conservative &lt;NA&gt;          &lt;NA&gt;          1
+## 11 Don't know   &lt;NA&gt;          &lt;NA&gt;          7
+## 12 Green        &lt;NA&gt;          &lt;NA&gt;          1
+## 13 Labour       &lt;NA&gt;          &lt;NA&gt;         11
+## 14 Maori Party  &lt;NA&gt;          &lt;NA&gt;          2
+## 15 National     &lt;NA&gt;          &lt;NA&gt;          7
+## 16 NZ First     &lt;NA&gt;          &lt;NA&gt;          2</code></pre>
 <p>The checks show that the observations with <code>NA</code>s in the <code>sameparty</code>are going to be excluded from the analysis when we fiter out the <code>NA</code>s in the <code>jpartyvote</code> and <code>X_singlefav</code> variables, so we don’t need to worry about them anymore.</p>
 </div>
 <div id="step-four.-prepare-for-the-second-question" class="section level2">
@@ -438,22 +437,24 @@ $(document).ready(function () {
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected_nzes2011 <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(jnzflike) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">n</span>())</code></pre></div>
+<pre><code>## Warning: Factor `jnzflike` contains implicit NA, consider using
+## `forcats::fct_explicit_na`</code></pre>
 <pre><code>## # A tibble: 13 x 2
-##      jnzflike count
-##        &lt;fctr&gt; &lt;int&gt;
-##  1          0   622
-##  2          1   298
-##  3         10   134
-##  4          2   266
-##  5          3   227
-##  6          4   162
-##  7          5   544
-##  8          6   165
-##  9          7   138
-## 10          8   107
-## 11          9    81
+##    jnzflike   count
+##    &lt;fct&gt;      &lt;int&gt;
+##  1 0            622
+##  2 1            298
+##  3 10           134
+##  4 2            266
+##  5 3            227
+##  6 4            162
+##  7 5            544
+##  8 6            165
+##  9 7            138
+## 10 8            107
+## 11 9             81
 ## 12 Don't know   224
-## 13         NA   133</code></pre>
+## 13 &lt;NA&gt;         133</code></pre>
 <p>While <code>jnzflike</code> is on a 0 to 10 scale, this variable also has a level labeled <code>&quot;Don't know&quot;</code>, which is why R stores this variable as not a numeric variable.</p>
 <p><code>jage</code>, on the other hand, is an integer, with values that are whole numbers between 0 and infinity (or <code>NA</code>). For this variable we would want to take a look at numerical summaries such as means, medians, etc.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected_nzes2011 <span class="op">%&gt;%</span><span class="st"> </span>
@@ -483,9 +484,9 @@ $(document).ready(function () {
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">n</span>())</code></pre></div>
 <pre><code>## # A tibble: 2 x 2
 ##   jnzflike count
-##     &lt;fctr&gt; &lt;int&gt;
-## 1        0   622
-## 2       10   134</code></pre>
+##   &lt;fct&gt;    &lt;int&gt;
+## 1 0          622
+## 2 10         134</code></pre>
 <p>Remember that the <code>jnzflike</code> is not a numerical variable, hence we use the quotation marks around the values (even though they happen to be numbers).</p>
 <p>This is an example of simpligying the analysis by considering only two levels of a categorical variable, as opposed to all possible levels.</p>
 </div>
@@ -498,11 +499,11 @@ selected_nzes2011 <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(retiredage) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">n</span>())</code></pre></div>
 <pre><code>## # A tibble: 3 x 2
-##    retiredage count
-##         &lt;chr&gt; &lt;int&gt;
-## 1 retired age   876
-## 2 working age  2156
-## 3        &lt;NA&gt;    69</code></pre>
+##   retiredage  count
+##   &lt;chr&gt;       &lt;int&gt;
+## 1 &lt;NA&gt;           69
+## 2 retired age   876
+## 3 working age  2156</code></pre>
 <p>We can see that individuals in the dataset are now labeled as either <code>&quot;retired age&quot;</code> or <code>&quot;working age&quot;</code> or neither (<code>NA</code>), which we can easily filter out if need be.</p>
 <p>This is an example of using a numerical threshold to convert a numerical variable to a categorical variable.</p>
 <p>For approach 2, we might also be want to turn the scale of liking into numeric values, because at the moment we cannot easily get summary information of the data in factor form. For example, if we ty to run the following command, we get an error saying “need numeric data”.</p>
@@ -517,49 +518,58 @@ selected_nzes2011 <span class="op">%&gt;%</span><span class="st"> </span>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected_nzes2011 <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(jnzflike, numlikenzf) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">n</span>())</code></pre></div>
+<pre><code>## Warning: Factor `jnzflike` contains implicit NA, consider using
+## `forcats::fct_explicit_na`
+
+## Warning: Factor `jnzflike` contains implicit NA, consider using
+## `forcats::fct_explicit_na`</code></pre>
 <pre><code>## # A tibble: 13 x 3
-## # Groups:   jnzflike [?]
-##      jnzflike numlikenzf count
-##        &lt;fctr&gt;      &lt;dbl&gt; &lt;int&gt;
-##  1          0          1   622
-##  2          1          2   298
-##  3         10          3   134
-##  4          2          4   266
-##  5          3          5   227
-##  6          4          6   162
-##  7          5          7   544
-##  8          6          8   165
-##  9          7          9   138
-## 10          8         10   107
-## 11          9         11    81
+## # Groups:   jnzflike [13]
+##    jnzflike   numlikenzf count
+##    &lt;fct&gt;           &lt;dbl&gt; &lt;int&gt;
+##  1 0                   1   622
+##  2 1                   2   298
+##  3 10                  3   134
+##  4 2                   4   266
+##  5 3                   5   227
+##  6 4                   6   162
+##  7 5                   7   544
+##  8 6                   8   165
+##  9 7                   9   138
+## 10 8                  10   107
+## 11 9                  11    81
 ## 12 Don't know         12   224
-## 13         NA         NA   133</code></pre>
+## 13 &lt;NA&gt;               NA   133</code></pre>
 <p>Factor entries have two parts: the text we see on the screen, and a numeric order (remember how 10 was coming between 1 and 2 because of the alphabetical order). When we say “turn this into a number”, R uses the numeric order in which it stores the values to do that conversion, as opposed to the names of the levels of the categorical variable. Hence, we need a conversion method that will use the text strings that label the levels, as opposed to the storage order of these levels. We can do this by first saving the variable as a character variable, and then turning it into a number:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected_nzes2011 &lt;-<span class="st"> </span>selected_nzes2011 <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">numlikenzf =</span> <span class="kw">as.numeric</span>(<span class="kw">as.character</span>(jnzflike)))</code></pre></div>
-<pre><code>## Warning in evalq(as.numeric(as.character(jnzflike)), &lt;environment&gt;): NAs
-## durch Umwandlung erzeugt</code></pre>
+<pre><code>## Warning: NAs durch Umwandlung erzeugt</code></pre>
 <p>The warning “NAs introduced by coercion” happens since the level <code>&quot;Don't know&quot;</code> cannot be turned into a number. But this should be fine for our purposes since we are interested in the numerical responses anyway.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">selected_nzes2011 <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(jnzflike, numlikenzf) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">count =</span> <span class="kw">n</span>())</code></pre></div>
+<pre><code>## Warning: Factor `jnzflike` contains implicit NA, consider using
+## `forcats::fct_explicit_na`
+
+## Warning: Factor `jnzflike` contains implicit NA, consider using
+## `forcats::fct_explicit_na`</code></pre>
 <pre><code>## # A tibble: 13 x 3
-## # Groups:   jnzflike [?]
-##      jnzflike numlikenzf count
-##        &lt;fctr&gt;      &lt;dbl&gt; &lt;int&gt;
-##  1          0          0   622
-##  2          1          1   298
-##  3         10         10   134
-##  4          2          2   266
-##  5          3          3   227
-##  6          4          4   162
-##  7          5          5   544
-##  8          6          6   165
-##  9          7          7   138
-## 10          8          8   107
-## 11          9          9    81
+## # Groups:   jnzflike [13]
+##    jnzflike   numlikenzf count
+##    &lt;fct&gt;           &lt;dbl&gt; &lt;int&gt;
+##  1 0                   0   622
+##  2 1                   1   298
+##  3 10                 10   134
+##  4 2                   2   266
+##  5 3                   3   227
+##  6 4                   4   162
+##  7 5                   5   544
+##  8 6                   6   165
+##  9 7                   7   138
+## 10 8                   8   107
+## 11 9                   9    81
 ## 12 Don't know         NA   224
-## 13         NA         NA   133</code></pre>
+## 13 &lt;NA&gt;               NA   133</code></pre>
 <p>Converting the factor to a character first ensures that the numerical values used in the labels of the levels of the categorical variable are used.</p>
 <p>Now that we cleaned up the data in a way that addresses the needs of the research questions we want to explore, we are ready to continue with our analysis.</p>
 </div>

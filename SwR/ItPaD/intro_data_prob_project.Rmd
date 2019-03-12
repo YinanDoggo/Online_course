@@ -1,0 +1,84 @@
+---
+title: "Exploring the BRFSS data"
+output: 
+  html_document: 
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+## Setup
+
+### Load packages
+
+```{r load-packages, message = FALSE}
+library(ggplot2)
+library(dplyr)
+```
+
+### Load data
+
+Make sure your data and R Markdown files are in the same directory. When loaded
+your data file will be called `brfss2013`. Delete this note when before you submit 
+your work. 
+
+```{r load-data}
+load("brfss2013.RData")
+names(brfss2013)
+```
+
+
+
+* * *
+
+## Part 1: Data
+
+* 2 pt for correct reasoning for generabizability – Answer should discuss whether random sampling was used. Learners might discuss any reservations, those should be well justified.
+
+* 1 pt for correct reasoning for causality – Answer should discuss whether random assignment was used.
+
+Answer: random sampling has been applied, although people who do not own cell phone and landline are excluded. Nevertherless the percentage of people who neither has cell phone nor landline is extremly low. Thus one can ignore the effect of excluding them.Random assignment has not been applied, as only surveys were conducted. Therefore, the statistic only reveal correlation rather than causality. In total 491,773 samples are collected from non-institutionalized adult (older than 18) of 50 states for year 2013 and 2014. Given the large sample size, one could generalize the correlation statement to the whole population of the US.
+
+* * *
+
+## Part 2: Research questions
+
+**Research quesion 1:**
+Correlation between general health and health care access
+
+**Research quesion 2:**
+Correlation between general health and tobacco use and alcohol consumption
+
+**Research quesion 3:**
+Correlation between general health amd income leve, education level 
+
+* * *
+
+## Part 3: Exploratory data analysis
+
+NOTE: Insert code chunks as needed by clicking on the "Insert a new code chunk" 
+button (green button with orange arrow) above. Make sure that your code is visible
+in the project you submit. Delete this note when before you submit your work.
+
+**Research quesion 1:**
+
+```{r}
+
+```
+
+
+
+**Research quesion 2:**
+
+```{r}
+
+```
+
+
+
+**Research quesion 3:**
+
+```{r}
+
+```
+
