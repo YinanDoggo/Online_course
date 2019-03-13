@@ -24,7 +24,6 @@ your work.
 
 ```{r load-data}
 load("brfss2013.RData")
-names(brfss2013)
 ```
 
 
@@ -40,14 +39,57 @@ names(brfss2013)
 Answer: random sampling has been applied, although people who do not own cell phone and landline are excluded. Nevertherless the percentage of people who neither has cell phone nor landline is extremly low. Thus one can ignore the effect of excluding them.Random assignment has not been applied, as only surveys were conducted. Therefore, the statistic only reveal correlation rather than causality. In total 491,773 samples are collected from non-institutionalized adult (older than 18) of 50 states for year 2013 and 2014. Given the large sample size, one could generalize the correlation statement to the whole population of the US.
 
 * * *
-
+```{r explore data}
+library(dplyr)
+brfss2013 %>%
+  group_by(genhlth) %>%
+  summarise(count = n())
+```
 ## Part 2: Research questions
 
 **Research quesion 1:**
 Correlation between general health and health care access
 
+genhlth : hlthpln1, persdoc2, medcost, checkup1
+
+```{r }
+brfss2013 %>%
+  filter(medcost == "No", !is.na(hlthpln1), !is.na(genhlth)) %>%
+  group_by(hlthpln1,genhlth) %>%
+  summarise(count = n())
+```
+
+```{r }
+head(brfss2013)
+names(brfss2013)
+attach(brfss2013)
+plot(genhlth~hlthpln1)
+```
 **Research quesion 2:**
 Correlation between general health and tobacco use and alcohol consumption
+
+```{r }
+plot(smokday2~avedrnk2)
+plot(avedrnk2,smokday2)
+summary(smokday2) ; summary(avedrnk2)
+hist(avedrnk2)
+
+brfss2013 <- brfss2013 %>%
+  mutate(smk_drk = ifelse(avedrnk2 >= 2 & smokday2 != "Not at all", "Yes", "No"))
+
+brfss2013 %>%
+  group_by(smk_drk) %>%
+  summarise(count = n())
+attach(brfss2013)
+
+test <- brfss2013 %>%
+  group_by(genhlth,smk_drk) %>%
+  summarize(count = n()) %>%
+  na.omit() 
+test <- sapply(c(1,3,5,7,9), function(x) (test$count[x]-test$count[x+1]))
+plot(test)
+
+```
 
 **Research quesion 3:**
 Correlation between general health amd income leve, education level 
