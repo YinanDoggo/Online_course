@@ -492,3 +492,154 @@ for(i in 1:10000){
         store[i] <- sum(sample(1:100, rep=TRUE) ==4)>0
 }
 mean(store)
+
+## Chapter 5 5.4 Exercise
+ # Question 5
+ # a)
+?Default
+glm.fit <- glm(default~income+balance, data=Default, family=binomial)
+glm.fit
+summary(glm.fit)
+
+ # b) c)
+set.seed(1)
+train <- sample(1:nrow(Default), nrow(Default)/2)
+test <- (-train)
+glm.fit <- glm(default~income+balance, data=Default, subset=train, family=binomial)
+glm.probs <- predict(glm.fit, newdata=Default[test,], type="response") 
+glm.pred <- ifelse(glm.probs>0.5, "Yes", "No")
+table(glm.pred, Default[test,]$default)
+mean(glm.pred!=Default[test,]$default)
+# depending on the subseting, the result of test error rate varies 
+
+ # d)
+set.seed(1)
+train <- sample(1:nrow(Default), nrow(Default)/2)
+test <- (-train)
+glm.fit <- glm(default~income+balance+student, data=Default, subset=train, family=binomial)
+glm.probs <- predict(glm.fit, newdata=Default[test,], type="response") 
+glm.pred <- ifelse(glm.probs>0.5, "Yes", "No")
+table(glm.pred, Default[test,]$default)
+mean(glm.pred!=Default[test,]$default)
+# it increases the test error rate
+
+# Question 6 
+# a)
+set.seed(1)
+summary(glm.fit) # stderr = 7.563e-06 for income and 3.467e-04 for balance
+
+# b)
+boot.fn <- function(data, index){
+        glm.fit <- glm(default~income+balance, data=data, subset=index, family=binomial)
+        glm.fit$coefficients
+}
+boot.fn(Default, train)
+summary(glm.fit)
+
+# c)
+boot.out <- boot(Default, boot.fn, R=50)
+boot.out
+plot(boot.out)
+View(boot.out)
+
+# d)
+ # The values obtained by glm() are smaller than those by bootstrap. In general they are very similar though.
+
+# Question 7
+# a)
+set.seed(1)
+glm.fit <- glm(Direction~Lag1+Lag2, data=Weekly, family=binomial)
+summary(glm.fit)
+
+# b)
+glm.fit_1 <- glm(Direction~Lag1+Lag2, data=Weekly[-1,], family=binomial)
+summary(glm.fit_1)
+
+# c)
+glm.probs <- predict(glm.fit_1, newdata=Weekly[1,], type="response")
+glm.pred <- ifelse(glm.probs>0.5, "Up", "Down")
+glm.pred # it did correctly predict the direction (predicted "Down" Vs. observed "Up")
+
+# d)
+n <- nrow(Weekly)
+count <- rep(0,n)
+for (i in 1:n){
+        glm.fit_1 <- glm(Direction~Lag1+Lag2, data=Weekly[-i,], family=binomial)
+        glm.probs <- predict(glm.fit_1, newdata=Weekly[i,], type="response")
+        glm.pred <- ifelse(glm.probs>0.5, "Up", "Down")
+        count[i] <- ifelse(glm.pred!=Weekly[i,]$Direction, 1, 0)
+}
+
+# e)
+sum(count); mean(count)
+
+# Question 8
+# a)
+set.seed(1)
+x <- rnorm(100)
+y <- x - 2*x^2 + rnorm(100) # n = 100, p = 2, y = x - 2*x^2 + error
+
+# b)
+plot(x,y) # it is a qudratic function
+
+# c) d)
+set.seed(1)
+df <- data.frame(x, y)
+glm.fit <- glm(y~x, data=df) # i model
+cv.glm(df, glm.fit)$delta
+
+glm.fit <- glm(y~poly(x, 2), data=df) # ii model
+cv.glm(df, glm.fit)$delta
+
+glm.fit <- glm(y~poly(x, 3), data=df) # iii model
+cv.glm(df, glm.fit)$delta
+
+glm.fit <- glm(y~poly(x, 4), data=df) # iv model
+cv.glm(df, glm.fit)$delta
+
+# 0.9539049 0.9534453 poly = 4 set.seed(2)
+# 0.9539049 0.9534453 poly = 4 set.seed(1)
+# same result
+
+# e) the model ii has the smallest cv.error. It is as expected, as the true model is quadratic.
+
+# f) 
+summary(glm.fit) # the p-values of x and x^2 are extremly small indicating the highly statistical significance
+
+# Question 9
+# a)
+set.seed(1)
+library(MASS)
+?Boston
+attach(Boston)
+miu <- mean(medv)
+miu
+
+# b)
+sd(medv)/sqrt(length(medv))
+
+# c)
+std.boot <- function(data, index){
+        mean(data[index])
+}
+boot.out <- boot(medv, std.boot, R=1000)
+boot.out
+
+# d)
+c(miu - 2*0.4119, miu + 2*0.4119)
+t.test(medv)
+# bootstrap t is broader than the t.test estimate
+
+# e)
+median(medv)
+
+# f)
+median.boot <- function(data, index) return(median(data[index]))
+boot(medv, median.boot, R=1000)
+
+# g) Q9 C5.4 p201
+quantile(medv, 0.1)
+
+# h) Q9 C5.4 p201
+percentile.boot <- function(data,index) return(quantile(data[index],0.1))
+boot(medv, percentile.boot, R=1000)
