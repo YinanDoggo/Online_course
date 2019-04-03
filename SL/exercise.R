@@ -253,9 +253,7 @@ table(knn.train, Direction[train])
 
 #   0.5 correct prediction rate
 
-# i)
-
- # trial to calculate LD1 and posterior probability "by hand" based on e)
+# trial to calculate LD1 and posterior probability "by hand" based on e)
 test.down <- subset(Weekly[,"Lag2"],Direction=="Down" & Year<2009)
 test.up <- subset(Weekly[,"Lag2"],Direction=="Up" & Year<2009)
 test <- subset(Weekly[,"Lag2"], Year<2009)
@@ -284,4 +282,213 @@ subset(data.frame(lda.pred), class=="Down")
 predict(lda.fit)$x[1]
 lda.fit$scaling*Weekly[train,]
 
-scale
+# i)
+# logistic regression model
+summary(train)
+library(MASS)
+library(ISLR)
+names(Weekly)
+summary(Weekly)
+str(Weekly)
+?Weekly
+attach(Weekly)
+train = Year<2009
+pairs(Weekly, col=Direction, cex.labels=2)
+?pairs
+glm.fit = glm(Direction~Lag1*Lag2*Lag3, data=Weekly, subset=train, family=binomial)
+summary(glm.fit)
+glm.prob = predict(glm.fit, newdata=Weekly[!train,], type="response")
+glm.pred = rep("Down", length(glm.prob))
+glm.pred[glm.prob > 0.5] = "Up"
+table(glm.pred, Direction[!train])
+mean(glm.pred==Direction[!train])
+
+# linear discriminate analysis
+lda.fit = lda(Direction~Lag1*Lag2*Lag3, data=Weekly, subset=train)
+lda.pred = predict(lda.fit, newdata=Weekly[!train,])
+(lda.fit)
+data.frame(lda.pred)[1:10,]
+table(lda.pred$class, Direction[!train])
+mean(lda.pred$class==Direction[!train])
+
+# qudratic discriminate analysis
+qda.fit = qda(Direction~poly(Lag1, degree=2)+poly(Lag2, degree=2), data=Weekly, subset=train)
+qda.pred = predict(qda.fit, Weekly[!train,])
+table(qda.pred$class, Direction[!train])
+mean(qda.pred$class==Direction[!train])
+
+# KNN
+library(class)
+set.seed(1)
+stdzd.Weekly = cbind(Weekly[,c(1,9)],scale(Weekly[,-c(1,9)]))
+knn.pred = knn(as.matrix(stdzd.Weekly$Lag2[train]), as.matrix(stdzd.Weekly$Lag2[!train]), stdzd.Weekly$Direction[train],k=20)
+table(knn.pred, stdzd.Weekly$Direction[!train])
+mean(knn.pred==stdzd.Weekly$Direction[!train])
+
+# Question 11
+# a)
+pairs(Auto, col=cylinders, cex.labels=1.5)
+mpg01 <- ifelse(mpg>median(mpg),1,0)
+Auto.edit <- data.frame(Auto, mpg01)
+summary(Auto.edit)
+unique(year)
+attach(Auto.edit)
+
+# b)
+pairs(Auto.edit, col=year, cex.labels=1.3)
+cor(Auto.edit[,-9]) # the correlation matrix shows the most relevant items for predicting mpg01
+boxplot(Auto.edit[,-5])
+
+# c)
+train <- as.numeric(row.names(Auto.edit))<300
+length(mpg01[train])
+length(mpg01[!train])
+
+# d) LDA
+lda.fit <- lda(mpg01~cylinders+weight+displacement+horsepower, data=Auto.edit, subset=train)
+lda.pred <- predict(lda.fit, newdata=Auto.edit[!train,])
+data.frame(lda.pred)[1:10,]
+table(lda.pred$class, Auto.edit$mpg01[!train])
+mean(lda.pred$class!=Auto.edit$mpg01[!train])
+
+# e) QDA
+qda.fit <- qda(mpg01~cylinders+weight+displacement+horsepower, data=Auto.edit, subset=train)
+qda.pred <- predict(qda.fit, newdata=Auto.edit[!train,])
+table(qda.pred$class, Auto.edit$mpg01[!train])
+mean(qda.pred$class!=Auto.edit$mpg01[!train])
+
+# f) GLM
+glm.fit <- glm(mpg01~cylinders+weight+displacement+horsepower, data=Auto.edit, subset=train, family=binomial)
+glm.prob <- predict(glm.fit, newdata=Auto.edit[!train,], type="response")
+glm.pred <- ifelse(glm.prob>0.5, "1", "0")
+table(glm.pred, mpg01[!train])
+mean(glm.pred!=mpg01[!train])
+
+# g) KNN
+library(class)
+set.seed(1)
+names(Auto.edit)
+knn.pred <- knn(Auto.edit[,c(2:5)][train,], Auto.edit[,c(2:5)][!train,], mpg01[train], k=20)
+table(knn.pred, mpg01[!train])
+mean(knn.pred!=mpg01[!train])
+
+# Question 12
+
+# a)
+Power <- function() {
+        2^3
+}
+print(Power())
+
+# b)
+Power2 <- function(x,a) {
+        x^a
+}
+Power2(3,8)
+
+# c)
+Power2(10,3); Power2(8,17); Power2(131,3)
+
+# d)
+Power3 <- function(x,a) {
+        result <- x^a
+        return(result)
+}
+
+# e)
+plot(c(1:10), Power3(1:10,2), log="xy", main="Question 12", sub="(e)", xlab="log x", ylab="log y")
+
+# f)
+PlotPower <- function(x,a) {
+        plot(x, x^a, log="xy", main="plot of x against y", xlab="log x", ylab="log y")
+}
+PlotPower(1:10,3)
+
+# Question 13
+?Boston
+names(Boston)
+summary(Boston)
+attach(Boston.edit)
+Boston.edit <- Boston
+str(Boston)
+cor(Boston)
+pairs(Boston, cex.labels=1.5)
+plot(crim)
+?Boston
+View(Boston)
+
+train <- as.numeric(row.names(Boston)) <= rep(nrow(Boston)/2, nrow(Boston))
+train
+crim01 <- ifelse(crim>median(crim), 1, 0)
+Boston.edit <- cbind(Boston, crim01)
+head(Boston.edit)
+
+# GLM
+glm.fit <- glm(crim01~.-crim-crim01, data=Boston.edit, family=binomial, subset=train)
+glm.prob <- predict(glm.fit, newdata=Boston.edit[!train,], type="response")
+glm.pred <- ifelse(glm.prob>0.5, 1, 0)
+table(glm.pred, crim01[!train])
+mean(glm.pred!=crim01[!train])
+
+# LDA
+lda.fit <- lda(crim01~.-crim-crim01, data=Boston.edit, subset=train)
+lda.pred <- predict(lda.fit, newdata=Boston.edit[!train,])
+table(lda.pred$class, crim01[!train])
+mean(lda.pred$class!=crim01[!train])
+
+# KNN
+library(class)
+set.seed(1)
+attach(Boston.edit)
+names(Boston.edit)
+knn.pred <- knn(Boston.edit[,-c(1,15)][train,], Boston.edit[,-c(1,15)][!train,], crim01[train], k=10)
+table(knn.pred, crim01[!train])
+mean(knn.pred!=crim01[!train])
+
+# Web Question 5.R Review Questions
+library(ISLR)
+names(Portfolio)
+str(Portfolio)
+summary(Portfolio)
+plot(Portfolio)
+?Portfolio
+load("5.R.RData")
+attach(Xy)
+par(mfrow=c(1,1))
+plot(X1);plot(X2);plot(y)
+lm.fit <- lm(y~., data=Xy)
+summary(lm.fit)
+matplot(Xy, type="l")
+?plot
+matplot(X1)
+plot(X2)
+coef(lm.fit)
+boot.fn <- function(data, index){
+    return(coef(lm(y~., data=Xy, subset=index)))
+}
+set.seed(1)
+boot.fn(Xy, sample(nrow(Xy),nrow(Xy),replace=T))
+
+library("boot")
+boot.out <- boot(Xy, boot.fn, 1000)
+plot(boot.out)
+
+boot.fn <- function(data, index){
+        x <- sample(seq(1, 901, 100), replace=T)
+        index = as.vector(mapply(seq, from = x, to = x+99))
+        return(coef(lm(y~., data=Xy, subset=index)))
+}
+
+boot(Xy, boot.fn, 1000)
+
+# Exercise chapter 5
+# Question 1 
+# g)
+tail(sapply(c(1:100000), function(x) 1-(1-(1/x))^x))
+
+# h)
+store <- rep(NA,10000)
+for(i in 1:10000){
+        store[i] <- sum(sample(1:100, rep=TRUE) ==4)>0
+}
+mean(store)

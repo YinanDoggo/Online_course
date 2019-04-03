@@ -1,0 +1,19 @@
+SL 5-7 days
+Bayesian 2 days (10h)
+Python_app 2-3 days (14h)
+Python_ML 4-6 days 34h
+
+13-18 days needed
+
+2.5-3
+4
+5
+5
+1-2
+
+17.5-19 days available
+
+13d ned. Vs. 17.5d ava. = 4.5d SUSTAg
+13d ned. Vs. 19d ava. = 6d SUSTAg
+18d ned. Vs. 17.5d ava. = -0.5 SUSTAg
+18d ned. Vs. 19d ava. = 1d SUSTAg
