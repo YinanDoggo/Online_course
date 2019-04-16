@@ -643,3 +643,95 @@ quantile(medv, 0.1)
 # h) Q9 C5.4 p201
 percentile.boot <- function(data,index) return(quantile(data[index],0.1))
 boot(medv, percentile.boot, R=1000)
+
+# Chapter 6
+
+# Conceptual p259
+
+# Question 1
+# c) true, true, false, false, false
+
+# Question 2
+# a) iii. true
+# b) iii. true
+# c) ii. true
+
+# Question 3
+# increasing s from 0 => increasing number of predictors => more flexible
+# a) overfitting => training RSS decreases steadily 
+        # iv. 
+# b) no overfitting problem for test RSS => decreases in the beginning and then increase again
+        # ii.
+# c) more flexible models has lower bias and higher variance
+        # iii.
+# d) opposite of above
+        # iv.
+# e) reamins constant 
+        # v.
+
+# Question 4
+# Ridge Regression: increasing lambda from 0 => decreasing number of predictors => less flexibility
+# a) training RSS will increase steadily
+        # iii.
+# b) test RSS no overfitting problem and decrease and then increase 
+        # ii.
+# c) with model becoming simpler the variance decreases
+        # iv.
+# d) opposite of c)
+        # iii.
+# e) irreducible errors remains constant
+        # v.
+
+# Question 6
+
+# b)
+y <- 2
+lbd <- 2
+beta <- seq(-3, 3, 0.01)
+func.lasso <- (y-beta)^2 + lbd*abs(beta)
+plot(beta, func.lasso, pch=20)
+
+est.beta <- y - lbd/2
+est.func.lasso <- (y-est.beta)^2 + lbd*abs(est.beta)
+points(est.beta, est.func.lasso, col="red", pch=20)
+
+# Applied p262
+
+# Question 8
+# a)
+set.seed(1)
+X <- rnorm(100)
+e <- rnorm(100)
+b0 <- 3
+b1 <- 2
+b2 <- -3
+b3 <- 0.3
+
+# b)
+Y <- b0 + b1*X + b2*X^2 + b3*X^3 + e
+plot(X,Y)
+
+# c)
+library(leaps)
+rnd.data <- data.frame(cbind(X,Y)); (rnd.data)
+fit.bst <- regsubsets(Y ~ X+I(X^2)+I(X^3)+I(X^4)+I(X^5)+I(X^6)+I(X^7)+I(X^8)+I(X^9)+I(X^10), data=rnd.data, nvmax=10)
+
+plot(fit.bst, scale="Cp") # b0 + X + X^2 + X^3 + X^5
+plot(fit.bst, scale="bic") # b0 + X^2 + X^3
+plot(fit.bst, scale = "adjr2") # b0 + X + X^2 + X3 + X^5
+names(fit.bst)
+
+par(mfrow=c(1,2))
+
+fit.bst.sum <- summary(fit.bst)
+cp.min.pt <- which.min(fit.bst.sum$cp)
+cp.min.vl <- fit.bst.sum$cp[cp.min.pt]
+plot(fit.bst.sum$cp) + points(cp.min.pt, cp.min.vl, col="red", pch=20)
+
+bic.min.pt <- which.min(fit.bst.sum$bic)
+bic.min.vl <- fit.bst.sum$bic[bic.min.pt]
+plot(fit.bst.sum$bic) + points(bic.min.pt, bic.min.vl, col="red", pch=20)
+
+ar2.max.pt <- which.max(fit.bst.sum$adjr2)
+ar2.max.vl <- fit.bst.sum$adjr2[ar2.max.pt]
+plot(fit.bst.sum$adjr2) + points(ar2.max.pt, ar2.max.vl, col="red", pch=20)

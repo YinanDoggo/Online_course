@@ -1,0 +1,11 @@
+R
+
+numbers of graphs displayed: 
+
+Python
+
+Plot package: import matplotlib.pyplot as plt
+Create plot: plt.figure()
+plot: plt.plot(...)
+
+new line in str: \nby
