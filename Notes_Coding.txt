@@ -1,11 +1,25 @@
-R
+			R
 
-numbers of graphs displayed: 
+par(mfrow = c(x,x))
+	numbers of graphs displayed
 
-Python
+lm(y ~ x, data=...)
+	least square linear regression 
 
-Plot package: import matplotlib.pyplot as plt
-Create plot: plt.figure()
-plot: plt.plot(...)
+pairs()
+	subplots of all predictors
+
+			
+			
+			Python
+
+import matplotlib.pyplot as plt
+	Plot package
+
+plt.figure()
+	Create plot
+
+plt.plot(...)
+	plot figure
 
 new line in str: \nby

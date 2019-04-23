@@ -735,3 +735,472 @@ plot(fit.bst.sum$bic) + points(bic.min.pt, bic.min.vl, col="red", pch=20)
 ar2.max.pt <- which.max(fit.bst.sum$adjr2)
 ar2.max.vl <- fit.bst.sum$adjr2[ar2.max.pt]
 plot(fit.bst.sum$adjr2) + points(ar2.max.pt, ar2.max.vl, col="red", pch=20)
+
+# d) using forward and backward selection and repeat c)
+# forward selection
+fit.fwd <- regsubsets(Y ~ X+I(X^2)+I(X^3)+I(X^4)+I(X^5)+I(X^6)+I(X^7)+I(X^8)+I(X^9)+I(X^10), data=rnd.data, nvmax=10, method="forward")
+
+plot(fit.fwd, scale="Cp") # b0 + X + X^2 + X^7
+plot(fit.fwd, scale="bic") # same
+plot(fit.fwd, scale="adjr2") # same
+
+fit.fwd.sum <- summary(fit.fwd)
+cp.min.pt <- which.min(fit.fwd.sum$cp)
+cp.min.vl <- fit.fwd.sum$cp[cp.mint.pt]
+plot(fit.fwd.sum$cp) + points(cp.min.pt, cp.min.vl, col="red", pch=20)
+
+fit.fwd.sum <- summary(fit.fwd)
+bic.min.pt <- which.min(fit.fwd.sum$bic)
+bic.min.vl <- fit.fwd.sum$bic[bic.mint.pt]
+plot(fit.fwd.sum$bic) + points(bic.min.pt, bic.min.vl, col="red", pch=20)
+
+fit.fwd.sum <- summary(fit.fwd)
+adjr2.max.pt <- which.max(fit.fwd.sum$adjr2)
+adjr2.max.vl <- fit.fwd.sum$adjr2[adjr2.max.pt]
+plot(fit.fwd.sum$adjr2) + points(adjr2.max.pt, adjr2.max.vl, col="red", pch=20)
+
+# forward stepwise selection choses the model b0 + X + X^2 + X^7 using the three criterion cp, bic and adjr2
+
+# backward selection
+fit.bwd <- regsubsets(Y ~ X+I(X^2)+I(X^3)+I(X^4)+I(X^5)+I(X^6)+I(X^7)+I(X^8)+I(X^9)+I(X^10), data=rnd.data, nvmax=10, method="backward")
+
+plot(fit.bwd, scale="Cp") # b0 + X + X^2 + X^9
+plot(fit.bwd, scale="bic") # same
+plot(fit.bwd, scale="adjr2") # same
+
+fit.bwd.sum <- summary(fit.bwd)
+cp.min.pt <- which.min(fit.bwd.sum$cp)
+cp.min.vl <- fit.bwd.sum$cp[cp.min.pt]
+plot(fit.bwd.sum$cp) + points(cp.min.pt, cp.min.vl, col="red", pch=20)
+
+fit.bwd.sum <- summary(fit.bwd)
+bic.min.pt <- which.min(fit.bwd.sum$bic)
+bic.min.vl <- fit.bwd.sum$bic[bic.min.pt]
+plot(fit.bwd.sum$bic) + points(bic.min.pt, bic.min.vl, col="red", pch=20)
+
+fit.bwd.sum <- summary(fit.bwd)
+adjr2.max.pt <- which.max(fit.bwd.sum$adjr2)
+adjr2.max.vl <- fit.bwd.sum$adjr2[adjr2.max.pt]
+plot(fit.bwd.sum$adjr2) + points(adjr2.max.pt, adjr2.max.vl, col="red", pch=20)
+
+# backward stepwise selection selects the model b0 + X + X^2 + X^9 using cp, bic and adjr2
+# forward and backward selection select different models
+
+# e) Lasso 
+library(glmnet)
+X <- model.matrix(Y ~ X+I(X^2)+I(X^3)+I(X^4)+I(X^5)+I(X^6)+I(X^7)+I(X^8)+I(X^9)+I(X^10), data=rnd.data)
+Y <- Y
+
+fit.lasso <- glmnet(X, Y, alpha=1)
+plot(fit.lasso, xvar="lambda", labe=TRUE)
+cv.lasso <- cv.glmnet(X, Y, alpha=1)
+cv.lasso$lambda.min
+names(cv.lasso); cv.lasso
+plot(cv.lasso)
+coef(cv.lasso)
+# lasso and best subset selection selects the same model
+
+# f) Lasso and best subset for new model Y = b0 + b7X^7 + e
+
+# Question 9 p263
+# a) split data into training and test sets
+
+library(ISLR)
+set.seed(11)
+sum(is.na(College))
+
+n= nrow(College) / 2 ; train.size
+train = sample(1:dim(College)[1], n)
+test = -train
+
+# b) fit linear regression with least square
+lm.fit = lm(Apps~., data=College, subset=train)
+lm.pred = predict(lm.fit, College[test,])
+mean((College$Apps[test] - lm.pred)^2)
+# Test RSS is 1538442
+
+# c) ridge regression, choose lambda by cv and report test error
+X <- model.matrix(Apps~., data=College)
+Y <- College$Apps
+length(Y); nrow(X)
+#ridge.fit <- glmnet(X[train,], Y[train], alpha=0)
+grid = 10 ^ seq(4, -2, length=100)
+cv.ridge <- cv.glmnet(X[train,], Y[train], alpha=0, lambda=grid, thresh=1e-12)
+plot(cv.ridge)
+coef(cv.ridge)
+lambda.best <- cv.ridge$lambda.min
+
+ridge.pred <- predict(cv.ridge, newx=X[test,], s=lambda.best)
+mean((ridge.pred - Y[test])^2)
+# THe RSS is 1608859
+
+# d) fit a lasso on training data, choose lambda by cross-validation and report error rate
+lasso.tr <- glmnet(X[train,], Y[train], alpha=1)
+lasso.pred <- predict(lasso.tr, X[test,])
+rsme <- sqrt(apply((lasso.pred-Y[test])^2, 2, mean))
+plot(log(lasso.tr$lambda), rsme, type="b", xlab="Log(Lmbda)")
+lam.best <- lasso.tr$lambda[order(rsme)[1]] ; lam.best
+coef(lasso.tr, s=lam.best)
+
+# Question 10 p265
+# (a) generate p=20 features, n=1000 observations, 
+set.seed(1)
+p <- 20
+n <- 1000
+x <- matrix(data=rnorm(n*p), nrow=n, ncol=p)
+B <- rnorm(p)
+B[3] <- 0
+B[4] <- 0
+B[9] <- 0
+B[10] <- 0
+B[19] <- 0
+eps <- rnorm(p)
+y <- x%*%B + eps
+# b)
+train <- sample(seq(1000), 100, replace=FALSE)
+
+# c)
+fit.best <- regsubsets(y~., data=data.frame(x=x[train,], y=y[train]), nvmax=p)
+x.train <- model.matrix(y~., data=data.frame(x=x[train,], y=y[train]))
+val.errors <- rep(NA, p)
+for (i in 1:p){
+        coefi <- coef(fit.best, id=i)
+        pred <- x.train[,names(coefi)]%*%coefi
+        val.errors[i] <- mean((y[train]-pred)^2)
+}
+plot(val.errors, ylab="Training MSE", pch=19, type="b")
+
+# d)
+x.test <- model.matrix(y~., data=data.frame(x=x[-train,], y=y[-train]))
+val.errors <- rep(NA, p)
+for (i in 1:p){
+        coefi <- coef(fit.best, id=i)
+        pred <- x.test[,names(coefi)]%*%coefi
+        val.errors[i] <- mean((y[-train]-pred)^2)
+}
+plot(val.errors, ylab="Testing MSE", pch=19, type="b")
+
+# (e)
+which.min(val.errors) # 16
+
+# (f)
+summary(fit.best)
+coef(fit.best, id=16)
+# b3 b4 b9 b10 b19 equal to zeor. Except b19 the model selected by best subset method is close to the true one.
+
+# (g)
+
+# Question 11 p264 
+# Predict per capita crime rate in Boston data
+
+# (a) using lasso, ridge, best subset, backward/forward selectiono
+
+# best subset
+set.seed(1)
+library(leaps)
+library(MASS)
+?Boston
+names(Boston)
+sum(is.na(Boston))
+
+predict.regsubsets <- function(object, newdata, id,...){
+        form <- as.formula(object$call[[2]])
+        mat <- model.matrix(form, newdata)
+        coefi <- coef(object, id=id)
+        mat[,names(coefi)]%*%coefi
+}t
+
+folds <- sample(rep(1:10, length=nrow(Boston)))
+table(folds)
+dim(Boston)
+k <- 10
+p <- dim(Boston)[2] - 1
+cv.errors <- matrix(NA, k, p)
+
+for (i in 1:k){
+        fit.best <- regsubsets(crim~., data=Boston[folds!=i,], nvmax=p)
+        for (j in 1:p){
+                pred <- predict.regsubsets(fit.best, Boston[folds==i,], id=j)
+                cv.errors[i,j] <- mean((pred-Boston$crim[folds==i])^2)
+        }
+        
+}
+cv.errors
+rmse.cv <- sqrt(apply(cv.errors, 2, mean))
+plot(rsme.cv, pch=19, type="b")
+which.min(rmse.cv)
+rmse.cv[which.min(rmse.cv)]
+coef(fit.best, id=2)
+# best subset chooses b0, rad and lstat with rmse = 3.5
+
+# lasso
+x <- model.matrix(crim~.-1, data=Boston)
+y <- Boston$crim
+cv.lasso <- cv.glmnet(x, y, alpha=1)
+plot(cv.lasso)
+coef(cv.lasso)
+sqrt(cv.lasso$cvm[cv.lasso$lambda == cv.lasso$lambda.1se])
+# lasso chooses b0 and rad with rmse =  7.411171
+
+# ridge
+cv.ridge <- cv.glmnet(x, y, alpha=0)
+plot(cv.ridge)
+coef(cv.ridge)
+sqrt(cv.lasso$cvm[cv.lasso$lambda == cv.lasso$lambda.1se])
+# ridge regression chooses 13 predictors with rmse = 7.405176
+
+# (b) choose lasso because of interpretability/efficiency or best subset model because of lower rmse
+
+
+
+# 7.R Review Questions
+# https://lagunita.stanford.edu/courses/HumanitiesSciences/StatLearning/Winter2016/courseware/43d59889973b4b34a7070918f2a7bb3f/10d2c51f157d456bb6c9a66fababbe16/?child=last
+
+load("D:/coursera/Online_course/SL/7.R.RData")
+par(mfrow=c(1,1))
+plot(x,y)
+fit <- lm(y~x)
+fit
+fit <- lm(y~1+x+I(x^2))
+fit
+plot(fit)
+
+
+
+# 7.9 Exercises p297
+
+# Conceptual
+
+# Question 1
+# (a) a1=b0+0 b1=b1 c1=b2 d1=b3
+# (b) a1=b0+b4 b1=b1 c1=b2 d1=b3
+# (c) 
+# (d) 
+
+# Applied
+
+# Question 6 p299
+# (a) 
+# Perform cross validation to determine the degree of polynomial
+
+library(ISLR)
+library(boot)
+set.seed(1)
+p <- 10
+cv.error <- rep(0,10)
+for (i in 1:p){
+        fit <- glm(wage~poly(age,i), data=Wage)
+        cv.error[i] <- cv.glm(Wage,fit,K=10)$delta[2]
+}
+plot(1:10,cv.error,xlab="poly degree",type="l",pch=20,lwd=2)
+lines(1:10,cv.error)
+points(which.min(cv.error),cv.error[which.min(cv.error)],col="red",type="o")
+
+# use anova function
+
+fit.1 = lm(wage~poly(age, 1), data=Wage)
+fit.2 = lm(wage~poly(age, 2), data=Wage)
+fit.3 = lm(wage~poly(age, 3), data=Wage)
+fit.4 = lm(wage~poly(age, 4), data=Wage)
+fit.5 = lm(wage~poly(age, 5), data=Wage)
+fit.6 = lm(wage~poly(age, 6), data=Wage)
+fit.7 = lm(wage~poly(age, 7), data=Wage)
+fit.8 = lm(wage~poly(age, 8), data=Wage)
+fit.9 = lm(wage~poly(age, 9), data=Wage)
+fit.10 = lm(wage~poly(age, 10), data=Wage)
+anova(fit.1, fit.2, fit.3, fit.4, fit.5, fit.6, fit.7, fit.8, fit.9, fit.10)
+
+# plot the polynominal predict function
+plot(wage~age,data=Wage,col="darkgrey")
+agelim <- range(Wage$age)
+age.grid <- seq(agelim[1],agelim[2])
+fit <- glm(wage~poly(age,3),data=Wage)
+preds <- predict(fit,newdata=list(age=age.grid),se=TRUE)
+lines(age.grid,preds$fit,lwd=2,col="darkblue")
+se.bands <- cbind(preds$fit-2*preds$se.fit,preds$fit+2*preds$se.fit)
+matlines(age.grid,se.bands,lty=2,col="darkblue")
+
+# (b) fit a step function
+cv.error <- rep(0,10)
+attach(Wage)
+for (i in 2:10){
+        Wage$age.cut <- cut(Wage$age,i)
+        fit <- glm(wage~age.cut,data=Wage)
+        cv.error[i] <- cv.glm(Wage,fit,K=10)$delta[2]
+}
+plot(2:10,cv.error[-1],xlab="splines",pch=2,type="l",lwd=2)        
+# the optimal bins is 8 for step function
+
+# plot the step function with 8 bins
+fit <- glm(wage~cut(age,8),data=Wage)
+plot(wage~age,data=Wage,col="darkgrey")
+preds <- predict(fit,newdata=list(age=age.grid),se=TRUE)
+se.bands <- cbind(preds$fit-2*preds$se.fit,preds$fit+2*preds$se.fit)
+lines(age.grid,preds$fit,lwd=2,col="darkgreen")
+matlines(age.grid,se.bands,lty=2,col="darkgreen")
+
+# Question 7
+library(ISLR)
+?Wage
+names(Wage)
+attach(Wage)
+summary(Wage)
+pairs(Wage)
+plot(race,wage)
+
+# try Lasso
+library(glmnet)
+set.seed(1)
+
+X <- model.matrix(wage~maritl+jobclass+age+race,data=Wage)
+Y <- wage
+
+fit.lasso <- glmnet(X, Y, alpha=1)
+plot(fit.lasso, xvar="lambda", labe=TRUE)
+cv.lasso <- cv.glmnet(X, Y, alpha=1)
+cv.lasso$lambda.min
+names(cv.lasso)
+plot(cv.lasso)
+coef(cv.lasso)
+
+fit.lm <- glm(wage~maritl+jobclass+age,data=Wage)
+summary(fit.lm)
+
+# QUestion 8
+?Auto
+names(Auto)
+attach(Auto)
+pairs(Auto) #shows non-linearity between mpg and (displacement, horsepower,weight)
+
+# Lasso
+X <- model.matrix(mpg~.,data=Auto)
+Y <- mpg
+
+fit.lasso <- glmnet(X,Y,alpha=1)
+plot(fit.lasso,xvar="lambda",label=TRUE)
+cv.lasso <- cv.glmnet(X,Y,alpha=1)
+plot(cv.lasso)
+coef(cv.lasso)
+# lasso select horsepower, weight, year and origin
+
+# polynomial with predictor horsepower
+# selecting polynomial degree using CV
+library(boot)
+set.seed(1)
+p <- 10
+cv.error <- rep(0,10)
+for (i in 1:p){
+        fit <- glm(mpg~poly(displacement,i), data=Auto)
+        cv.error[i] <- cv.glm(Auto,fit,K=10)$delta[2]
+}
+plot(1:10,cv.error,xlab="poly degree",pch=20,lwd=2) + lines(1:10,cv.error) + points(which.min(cv.error),cv.error[which.min(cv.error)],col="red",type="o",pch=20,cex=2)
+
+fit.glm <- glm(mpg~poly(displacement,10),data=Auto)
+summary(fit.glm) 
+d.lim <- range(displacement)
+d.grid <- seq(d.lim[1], d.lim[2])
+preds <- predict(fit.glm, newdata=list(displacement=d.grid), se=TRUE)
+se.bands <- cbind(preds$fit-2*preds$se, preds$fit+2*preds$se) #preds$se == preds$se.fit
+plot(displacement, mpg, col="darkgrey")
+lines(d.grid, preds$fit, lwd=2, col="blue")
+matlines(d.grid, se.bands, col="blue", lty=2)
+
+# Step function
+
+# Using CV to select cuts for step function
+
+cv.error <- rep(NA,10)
+for (i in 2:10){
+        Auto$dis.cut <- cut(Auto$displacement,i)
+        fit <- glm(mpg~dis.cut,data=Auto)
+        cv.error[i] <- cv.glm(Auto,fit,K=10)$delta[2]
+}
+which.min(cv.error)
+plot(2:10,cv.error[-1],xlab="Number of cuts",pch=2,type="l",lwd=2,lty="dashed")
+points(which.min(cv.error),cv.error[which.min(cv.error)],col="red",type="o",cex=2,pch=20)
+# 9 cuts/bins are selected 
+
+# plot the step function with 9 cuts/bins
+fit <- glm(mpg~cut(displacement,9),data=Auto)
+plot(mpg~displacement,data=Auto,col="darkgrey")
+preds <- predict(fit,newdata=list(displacement=d.grid),se=TRUE)
+se.bands <- cbind(preds$fit-2*preds$se.fit,preds$fit+2*preds$se.fit)
+lines(d.grid,preds$fit,lwd=2,col="darkgreen")
+matlines(d.grid,se.bands,lty=2,col="darkgreen")
+
+# Splines
+
+# natural splines
+cv.error <- rep(NA,10)
+for (i in 1:10){
+        fit <- glm(mpg~ns(displacement,df=i),data=Auto)
+        cv.error[i] <- cv.glm(Auto,fit,K=10)$delta[2]
+}
+which.min(cv.error) # df = 9
+# plot the natural splines
+fit <- glm(mpg~ns(displacement,df=9),data=Auto)
+plot(mpg~displacement,data=Auto,col="darkgrey")
+preds <- predict(fit,newdata=list(displacement=d.grid),se=TRUE)
+se.bands <- cbind(preds$fit-2*preds$se.fit,preds$fit+2*preds$se.fit)
+lines(d.grid,preds$fit,lwd=2,col="purple")
+matlines(d.grid,se.bands,lty=2,col="purple")
+
+# smoothing splines
+library(splines)
+fit2 <- smooth.spline(displacement,mpg,cv=TRUE)
+fit # effective degrees of freedom = 20.0332
+plot(displacement,mpg,col="darkgrey")
+lines(fit,col="purple",lwd=2)
+# plot the smoothing splines comparing to natural splines
+plot(mpg~displacement,data=Auto,col="darkgrey")
+lines(fit2,col="purple",lwd=2)
+lines(d.grid,preds$fit,lwd=2,col="red")
+legend('topright', legend=c("smoothing splines", "natural splines"),
+       col=c("purple", "red"), lty=1:2, cex=0.8)
+
+# GAMs
+library(gam)
+fit1 <- gam(mpg~s(displacement,df=4),data=Auto)
+fit2 <- gam(mpg~s(displacement,df=4)+s(horsepower,df=4),data=Auto)
+fit3 <- gam(mpg~s(displacement,df=4)+s(horsepower,df=4)+s(weight,df=4),data=Auto)
+fit4 <- gam(mpg~s(displacement,df=4)+s(horsepower,df=4)+s(weight,df=4)+s(year,df=4),data=Auto)
+
+anova(fit1,fit2,fit3,fit4,test='Chisq')
+summary(fit4)
+
+# Question 9
+set.seed(1)
+library(MASS)
+attach(Boston)
+names(Boston)
+# nox~dis
+
+# (a)
+fit <- glm(nox~poly(dis,3),data=Auto)
+par = (mfrow=c(1,1))
+dis.lim <- range(dis)
+dis.grid <- seq(dis.lim[1],dis.lim[2],0.1)
+preds <- predict(fit,newdata=list(dis=dis.grid),se=TRUE)
+se.bands <- cbind(preds$fit-2*preds$se.fit,preds$fit+2*preds$se.fit)
+plot(dis,nox,col="darkgrey")
+lines(dis.grid,preds$fit,col="red",lwd=2)
+matlines(dis.grid,se.bands,lty=2,col="red")
+
+# (b)
+all.rss <- rep(NA,10)
+for (i in 1:10){
+        fit <- lm(nox~poly(dis,i),data=Boston)
+        all.rss[i] <- sum(fit$residuals^2)
+}
+all.rss; which.min(all.rss); plot(1:10,all.rss,type="l") + points(which.min(all.rss),all.rss[which.min(all.rss)],col="red",type='o',pch=20,cex=2)
+
+# (c)
+cv.error <- rep(NA,10)
+for (i in 1:10){
+        fit <- glm(nox~poly(dis,i),data=Boston)
+        cv.error[i] <- cv.glm(Boston,fit,K=10)$delta[2]
+}
+cv.error; which.min(cv.error)
+plot(1:10,cv.error,xlab="polynomial degree",lwd=2,type="l")
+points(which.min(cv.error),cv.error[which.min(cv.error)],col="red",pch=20,type="o",cex=2)
+View(fit)
